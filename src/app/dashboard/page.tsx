@@ -4,6 +4,7 @@ import { useFinance } from "@/hooks/use-finance";
 import { Navbar } from "@/components/layout/Navbar";
 import { BalanceOverview } from "@/components/dashboard/BalanceOverview";
 import { TransactionDialog } from "@/components/transactions/TransactionDialog";
+import { DashboardCharts } from "@/components/dashboard/DashboardCharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
@@ -70,6 +71,9 @@ export default function DashboardPage() {
           </div>
 
           <BalanceOverview accounts={accounts} transactions={transactions} />
+
+          {/* Visual Insights Section */}
+          <DashboardCharts transactions={transactions} />
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
             <div className="lg:col-span-8 space-y-6 md:space-y-8">
