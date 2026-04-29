@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect } from "react";
@@ -129,7 +130,7 @@ export function TransactionDialog({
                 type="number" 
                 step="0.01" 
                 required 
-                className="pl-9 h-14 text-2xl font-black rounded-2xl border-none bg-secondary/30 dark:bg-slate-900/50 focus:bg-background dark:focus:bg-slate-900 transition-all text-foreground" 
+                className="pl-9 h-14 text-2xl font-black rounded-2xl border-none bg-secondary/30 dark:bg-slate-900/50 focus:bg-background dark:focus:bg-slate-900 transition-all text-foreground dark:text-white" 
                 placeholder="0.00"
                 defaultValue={initialData?.amount}
               />
@@ -190,7 +191,7 @@ export function TransactionDialog({
                 value={customCategory}
                 onChange={(e) => setCustomCategory(e.target.value)}
                 placeholder="e.g. Subscriptions" 
-                className="h-12 rounded-xl bg-secondary/30 dark:bg-slate-900/50 border-none text-foreground"
+                className="h-12 rounded-xl bg-secondary/30 dark:bg-slate-900/50 border-none text-foreground dark:text-white"
                 required
               />
             </div>
@@ -203,7 +204,7 @@ export function TransactionDialog({
               name="description" 
               placeholder="Add a note..." 
               defaultValue={initialData?.description} 
-              className="h-12 rounded-xl bg-secondary/30 dark:bg-slate-900/50 border-none text-foreground" 
+              className="h-12 rounded-xl bg-secondary/30 dark:bg-slate-900/50 border-none text-foreground dark:text-white" 
             />
           </div>
 

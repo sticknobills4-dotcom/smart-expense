@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useFinance } from "@/hooks/use-finance";
@@ -9,7 +10,8 @@ import {
   ArrowLeftRight,
   Search,
   Trash2,
-  Edit2
+  Edit2,
+  MoreVertical
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useState, useMemo } from "react";
@@ -17,6 +19,12 @@ import { TransactionDialog } from "@/components/transactions/TransactionDialog";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Transaction } from "@/types/finance";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function TransactionsPage() {
   const { user, transactions, accounts, loading, addTransaction, updateTransaction, deleteTransaction } = useFinance();
@@ -69,92 +77,137 @@ export default function TransactionsPage() {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-card/40 rounded-[2rem] md:rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.03)] border border-slate-100 dark:border-white/5 overflow-hidden mac-card">
-            <div className="overflow-x-auto scrollbar-hide">
-              <div className="min-w-full inline-block align-middle">
-                <table className="w-full text-left border-collapse min-w-[700px]">
-                  <thead>
-                    <tr className="border-b dark:border-white/5 bg-slate-50/50 dark:bg-slate-900/30">
-                      <th className="p-4 md:p-6 text-[9px] md:text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Type</th>
-                      <th className="p-4 md:p-6 text-[9px] md:text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Description</th>
-                      <th className="p-4 md:p-6 text-[9px] md:text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Account</th>
-                      <th className="p-4 md:p-6 text-[9px] md:text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Date</th>
-                      <th className="p-4 md:p-6 text-[9px] md:text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground text-right">Amount</th>
-                      <th className="p-4 md:p-6 text-[9px] md:text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground text-center">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100 dark:divide-white/5">
-                    {filtered.map((t) => (
-                      <tr key={t.id} className="hover:bg-slate-50/30 dark:hover:bg-slate-800/30 transition-colors group">
-                        <td className="p-4 md:p-6">
-                          <div className={cn(
-                            "w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl flex items-center justify-center shadow-sm transition-all duration-300 group-hover:scale-110",
-                            t.type === 'income' ? "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600" : 
-                            t.type === 'expense' ? "bg-red-50 dark:bg-red-950/30 text-red-600" : 
-                            "bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600"
-                          )}>
-                            {t.type === 'income' ? <ArrowDownLeft className="w-5 h-5 md:w-6 md:h-6" /> : 
-                             t.type === 'expense' ? <ArrowUpRight className="w-5 h-5 md:w-6 md:h-6" /> : 
-                             <ArrowLeftRight className="w-5 h-5 md:w-6 md:h-6" />}
-                          </div>
-                        </td>
-                        <td className="p-4 md:p-6">
-                          <p className="font-black text-foreground leading-tight text-sm md:text-base">{t.category || 'Uncategorized'}</p>
-                          <p className="text-[10px] md:text-xs text-muted-foreground font-bold uppercase tracking-wider mt-1 truncate max-w-[150px]">{t.description || 'No description'}</p>
-                        </td>
-                        <td className="p-4 md:p-6">
-                          <div className="flex flex-col gap-1.5">
-                            <span className="text-[9px] md:text-[10px] font-black px-2 py-0.5 md:px-3 md:py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-full uppercase tracking-tighter w-fit border border-slate-200 dark:border-white/10">
-                              {accounts.find(a => a.id === t.accountId)?.name || 'Account'}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="p-4 md:p-6 text-xs md:text-sm font-black text-muted-foreground whitespace-nowrap">
-                          {format(new Date(t.date), 'MMM dd, yyyy')}
-                        </td>
-                        <td className={cn(
-                          "p-4 md:p-6 text-right font-black text-base md:text-xl tracking-tighter whitespace-nowrap",
-                          t.type === 'income' ? "text-emerald-500" : t.type === 'expense' ? "text-red-500" : "text-indigo-500"
-                        )}>
-                          {t.type === 'expense' ? '-' : t.type === 'income' ? '+' : ''}${t.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                        </td>
-                        <td className="p-4 md:p-6 text-center">
-                          <div className="flex justify-center items-center gap-1 md:gap-2">
-                            <Button 
-                              variant="ghost" 
-                              size="icon" 
-                              className="h-8 w-8 md:h-10 md:w-10 text-muted-foreground hover:text-primary rounded-xl"
-                              onClick={() => handleEditClick(t)}
-                            >
-                              <Edit2 className="w-4 h-4 md:w-4.5 md:h-4.5" />
-                            </Button>
-                            <Button 
-                              variant="ghost" 
-                              size="icon" 
-                              className="h-8 w-8 md:h-10 md:w-10 text-muted-foreground hover:text-destructive rounded-xl"
-                              onClick={() => {
-                                if (confirm("Delete this transaction?")) {
-                                  deleteTransaction(t.id);
-                                }
-                              }}
-                            >
-                              <Trash2 className="w-4 h-4 md:w-4.5 md:h-4.5" />
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                    {filtered.length === 0 && (
-                      <tr>
-                        <td colSpan={6} className="p-20 text-center">
-                          <p className="text-muted-foreground font-black italic text-lg">No transactions found.</p>
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
+          {/* Compact Mobile List View (Hidden on Desktop) */}
+          <div className="md:hidden space-y-3">
+            {filtered.map((t) => (
+              <div key={t.id} className="p-4 bg-white dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-white/5 flex items-center justify-between group active:scale-[0.98] transition-all">
+                <div className="flex items-center gap-4">
+                  <div className={cn(
+                    "w-12 h-12 rounded-xl flex items-center justify-center shadow-sm shrink-0",
+                    t.type === 'income' ? "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600" : 
+                    t.type === 'expense' ? "bg-red-50 dark:bg-red-950/30 text-red-600" : 
+                    "bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600"
+                  )}>
+                    {t.type === 'income' ? <ArrowDownLeft className="w-5 h-5" /> : 
+                     t.type === 'expense' ? <ArrowUpRight className="w-5 h-5" /> : 
+                     <ArrowLeftRight className="w-5 h-5" />}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-bold text-foreground text-sm truncate">{t.category || 'General'}</p>
+                    <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">
+                      {format(new Date(t.date), 'MMM dd')} • {accounts.find(a => a.id === t.accountId)?.name || 'Account'}
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  <p className={cn(
+                    "font-black text-base tracking-tighter",
+                    t.type === 'income' ? "text-emerald-500" : t.type === 'expense' ? "text-red-500" : "text-indigo-500"
+                  )}>
+                    {t.type === 'expense' ? '-' : t.type === 'income' ? '+' : ''}${t.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                  </p>
+                  
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
+                        <MoreVertical className="w-4 h-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="rounded-2xl mac-glass">
+                      <DropdownMenuItem onClick={() => handleEditClick(t)} className="gap-2 font-bold py-3">
+                        <Edit2 className="w-4 h-4" /> Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem 
+                        onClick={() => { if (confirm("Delete this transaction?")) deleteTransaction(t.id); }}
+                        className="gap-2 font-bold py-3 text-destructive focus:text-destructive"
+                      >
+                        <Trash2 className="w-4 h-4" /> Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               </div>
-            </div>
+            ))}
+            {filtered.length === 0 && (
+              <div className="py-20 text-center text-muted-foreground font-medium italic">No transactions found.</div>
+            )}
+          </div>
+
+          {/* Detailed Table View (Hidden on Mobile) */}
+          <div className="hidden md:block bg-white dark:bg-card/40 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.03)] border border-slate-100 dark:border-white/5 overflow-hidden mac-card">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b dark:border-white/5 bg-slate-50/50 dark:bg-slate-900/30">
+                  <th className="p-6 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Type</th>
+                  <th className="p-6 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Description</th>
+                  <th className="p-6 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Account</th>
+                  <th className="p-6 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Date</th>
+                  <th className="p-6 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground text-right">Amount</th>
+                  <th className="p-6 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-white/5">
+                {filtered.map((t) => (
+                  <tr key={t.id} className="hover:bg-slate-50/30 dark:hover:bg-slate-800/30 transition-colors group">
+                    <td className="p-6">
+                      <div className={cn(
+                        "w-12 h-12 rounded-2xl flex items-center justify-center shadow-sm transition-all duration-300 group-hover:scale-110",
+                        t.type === 'income' ? "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600" : 
+                        t.type === 'expense' ? "bg-red-50 dark:bg-red-950/30 text-red-600" : 
+                        "bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600"
+                      )}>
+                        {t.type === 'income' ? <ArrowDownLeft className="w-6 h-6" /> : 
+                         t.type === 'expense' ? <ArrowUpRight className="w-6 h-6" /> : 
+                         <ArrowLeftRight className="w-6 h-6" />}
+                      </div>
+                    </td>
+                    <td className="p-6">
+                      <p className="font-black text-foreground leading-tight text-base">{t.category || 'Uncategorized'}</p>
+                      <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider mt-1 truncate max-w-[200px]">{t.description || 'No description'}</p>
+                    </td>
+                    <td className="p-6">
+                      <span className="text-[10px] font-black px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-full uppercase tracking-tighter w-fit border border-slate-200 dark:border-white/10">
+                        {accounts.find(a => a.id === t.accountId)?.name || 'Account'}
+                      </span>
+                    </td>
+                    <td className="p-6 text-sm font-black text-muted-foreground">
+                      {format(new Date(t.date), 'MMM dd, yyyy')}
+                    </td>
+                    <td className={cn(
+                      "p-6 text-right font-black text-xl tracking-tighter",
+                      t.type === 'income' ? "text-emerald-500" : t.type === 'expense' ? "text-red-500" : "text-indigo-500"
+                    )}>
+                      {t.type === 'expense' ? '-' : t.type === 'income' ? '+' : ''}${t.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                    </td>
+                    <td className="p-6 text-center">
+                      <div className="flex justify-center items-center gap-2">
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-10 w-10 text-muted-foreground hover:text-primary rounded-xl"
+                          onClick={() => handleEditClick(t)}
+                        >
+                          <Edit2 className="w-4.5 h-4.5" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-10 w-10 text-muted-foreground hover:text-destructive rounded-xl"
+                          onClick={() => {
+                            if (confirm("Delete this transaction?")) {
+                              deleteTransaction(t.id);
+                            }
+                          }}
+                        >
+                          <Trash2 className="w-4.5 h-4.5" />
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </main>
