@@ -53,6 +53,18 @@ const BudgetRecommendationsOutputSchema = z.object({
 });
 export type BudgetRecommendationsOutput = z.infer<typeof BudgetRecommendationsOutputSchema>;
 
+async function callWithRetry<T>(fn: () => Promise<T>, retries = 3, delay = 1000): Promise<T> {
+  try {
+    return await fn();
+  } catch (error: any) {
+    if (retries > 0 && (error?.message?.includes('503') || error?.message?.includes('UNAVAILABLE'))) {
+      await new Promise(resolve => setTimeout(resolve, delay));
+      return callWithRetry(fn, retries - 1, delay * 2);
+    }
+    throw error;
+  }
+}
+
 export async function budgetRecommendations(input: BudgetRecommendationsInput): Promise<BudgetRecommendationsOutput> {
   return budgetRecommendationsFlow(input);
 }
@@ -95,7 +107,7 @@ const budgetRecommendationsFlow = ai.defineFlow(
     outputSchema: BudgetRecommendationsOutputSchema,
   },
   async (input) => {
-    const { output } = await prompt(input);
-    return output!;
+    const response = await callWithRetry(() => prompt(input));
+    return response.output!;
   },
 );
