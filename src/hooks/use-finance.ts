@@ -39,10 +39,16 @@ export function useFinance() {
     return collection(firestore, 'users', user.uid, 'savingsGoals');
   }, [firestore, user?.uid]);
 
-  const { data: accounts = [], isLoading: accountsLoading } = useCollection<Account>(accountsQuery);
-  const { data: transactions = [], isLoading: transactionsLoading } = useCollection<Transaction>(transactionsQuery);
-  const { data: budgets = [], isLoading: budgetsLoading } = useCollection<Budget>(budgetsQuery);
-  const { data: savingsGoals = [], isLoading: goalsLoading } = useCollection<SavingsGoal>(savingsGoalsQuery);
+  const { data: accountsData, isLoading: accountsLoading } = useCollection<Account>(accountsQuery);
+  const { data: transactionsData, isLoading: transactionsLoading } = useCollection<Transaction>(transactionsQuery);
+  const { data: budgetsData, isLoading: budgetsLoading } = useCollection<Budget>(budgetsQuery);
+  const { data: savingsGoalsData, isLoading: goalsLoading } = useCollection<SavingsGoal>(savingsGoalsQuery);
+
+  // Ensure collections are never null to prevent runtime errors like "slice of null"
+  const accounts = useMemo(() => accountsData || [], [accountsData]);
+  const transactions = useMemo(() => transactionsData || [], [transactionsData]);
+  const budgets = useMemo(() => budgetsData || [], [budgetsData]);
+  const savingsGoals = useMemo(() => savingsGoalsData || [], [savingsGoalsData]);
 
   const loading = isUserLoading || accountsLoading || transactionsLoading || budgetsLoading || goalsLoading;
 
@@ -70,10 +76,10 @@ export function useFinance() {
   };
 
   // Transaction Mutations
-  const addTransaction = (data: Omit<Transaction, 'id' | 'userId' | 'createdAt'>) => {
+  const addTransaction = async (data: Omit<Transaction, 'id' | 'userId' | 'createdAt'>) => {
     if (!user || !firestore) return;
     const colRef = collection(firestore, 'users', user.uid, 'transactions');
-    addDocumentNonBlocking(colRef, {
+    await addDocumentNonBlocking(colRef, {
       ...data,
       userId: user.uid,
       createdAt: new Date().toISOString()
@@ -81,7 +87,7 @@ export function useFinance() {
     applyTransactionBalance(data, 1);
   };
 
-  const updateTransaction = (id: string, data: Partial<Transaction>) => {
+  const updateTransaction = async (id: string, data: Partial<Transaction>) => {
     if (!user || !firestore) return;
     const old = transactions.find(t => t.id === id);
     if (!old) return;
@@ -98,7 +104,7 @@ export function useFinance() {
     applyTransactionBalance(merged, 1);
   };
 
-  const deleteTransaction = (id: string) => {
+  const deleteTransaction = async (id: string) => {
     if (!user || !firestore) return;
     const t = transactions.find(item => item.id === id);
     if (!t) return;
@@ -111,30 +117,30 @@ export function useFinance() {
   };
 
   // Account Mutations
-  const addAccount = (data: Omit<Account, 'id' | 'userId' | 'createdAt'>) => {
+  const addAccount = async (data: Omit<Account, 'id' | 'userId' | 'createdAt'>) => {
     if (!user || !firestore) return;
     const colRef = collection(firestore, 'users', user.uid, 'accounts');
-    addDocumentNonBlocking(colRef, {
+    return addDocumentNonBlocking(colRef, {
       ...data,
       userId: user.uid,
       createdAt: new Date().toISOString()
     });
   };
 
-  const updateAccount = (id: string, data: Partial<Account>) => {
+  const updateAccount = async (id: string, data: Partial<Account>) => {
     if (!user || !firestore) return;
     const docRef = doc(firestore, 'users', user.uid, 'accounts', id);
     updateDocumentNonBlocking(docRef, { ...data, updatedAt: new Date().toISOString() });
   };
 
-  const deleteAccount = (id: string) => {
+  const deleteAccount = async (id: string) => {
     if (!user || !firestore) return;
     const docRef = doc(firestore, 'users', user.uid, 'accounts', id);
     deleteDocumentNonBlocking(docRef);
   };
 
   // Budget Mutations
-  const updateBudget = (category: string, amount: number, month: string) => {
+  const updateBudget = async (category: string, amount: number, month: string) => {
     if (!user || !firestore) return;
     const existing = budgets.find(b => b.category === category && b.month === month);
     if (existing) {
@@ -154,7 +160,7 @@ export function useFinance() {
   };
 
   // Savings Goal Mutations
-  const addSavingsGoal = (data: Omit<SavingsGoal, 'id' | 'userId' | 'createdAt' | 'status'>) => {
+  const addSavingsGoal = async (data: Omit<SavingsGoal, 'id' | 'userId' | 'createdAt' | 'status'>) => {
     if (!user || !firestore) return;
     const colRef = collection(firestore, 'users', user.uid, 'savingsGoals');
     addDocumentNonBlocking(colRef, {
@@ -165,13 +171,13 @@ export function useFinance() {
     });
   };
 
-  const updateSavingsGoal = (id: string, data: Partial<SavingsGoal>) => {
+  const updateSavingsGoal = async (id: string, data: Partial<SavingsGoal>) => {
     if (!user || !firestore) return;
     const docRef = doc(firestore, 'users', user.uid, 'savingsGoals', id);
     updateDocumentNonBlocking(docRef, data);
   };
 
-  const deleteSavingsGoal = (id: string) => {
+  const deleteSavingsGoal = async (id: string) => {
     if (!user || !firestore) return;
     const docRef = doc(firestore, 'users', user.uid, 'savingsGoals', id);
     deleteDocumentNonBlocking(docRef);

@@ -49,7 +49,8 @@ export default function DashboardPage() {
     );
   }
 
-  const recentTransactions = transactions.slice(0, 5);
+  // Safe slice even if transactions was null (though useFinance now ensures it is [])
+  const recentTransactions = (transactions || []).slice(0, 5);
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -170,8 +171,8 @@ export default function DashboardPage() {
       <AccountDialog 
         open={isAccountDialogOpen} 
         onOpenChange={setIsAccountDialogOpen} 
-        onSubmit={(data) => {
-          addAccount(data);
+        onSubmit={async (data) => {
+          await addAccount(data);
         }} 
       />
     </div>
