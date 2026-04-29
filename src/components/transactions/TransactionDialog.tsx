@@ -94,14 +94,14 @@ export function TransactionDialog({
           )}
         </DialogTrigger>
       )}
-      <DialogContent className="sm:max-w-[425px] mac-glass rounded-3xl p-8">
+      <DialogContent className="sm:max-w-[425px] mac-glass rounded-[2rem] p-6 md:p-8">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-black text-center mb-4">
+          <DialogTitle className="text-2xl font-black text-center mb-4 text-foreground">
             {initialData ? 'Edit Transaction' : 'Record Transaction'}
           </DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="flex bg-secondary/50 p-1.5 rounded-2xl">
+        <form onSubmit={handleSubmit} className="space-y-5 md:space-y-6">
+          <div className="flex bg-secondary/50 dark:bg-slate-900/50 p-1.5 rounded-2xl">
             {(['expense', 'income', 'transfer'] as const).map((t) => (
               <button
                 key={t}
@@ -109,7 +109,9 @@ export function TransactionDialog({
                 onClick={() => setType(t)}
                 className={cn(
                   "flex-1 py-2 text-xs font-black rounded-xl transition-all capitalize tracking-tight",
-                  type === t ? "bg-white shadow-sm text-primary" : "text-muted-foreground hover:text-foreground"
+                  type === t 
+                    ? "bg-white dark:bg-slate-800 shadow-sm text-primary" 
+                    : "text-muted-foreground hover:text-foreground"
                 )}
               >
                 {t}
@@ -127,7 +129,7 @@ export function TransactionDialog({
                 type="number" 
                 step="0.01" 
                 required 
-                className="pl-9 h-14 text-2xl font-black rounded-2xl border-none bg-secondary/30 focus:bg-white transition-all" 
+                className="pl-9 h-14 text-2xl font-black rounded-2xl border-none bg-secondary/30 dark:bg-slate-900/50 focus:bg-background dark:focus:bg-slate-900 transition-all text-foreground" 
                 placeholder="0.00"
                 defaultValue={initialData?.amount}
               />
@@ -138,7 +140,7 @@ export function TransactionDialog({
             <div className="space-y-2">
               <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider ml-1">Account</Label>
               <Select name="accountId" defaultValue={initialData?.accountId} required>
-                <SelectTrigger className="h-12 rounded-xl bg-secondary/30 border-none">
+                <SelectTrigger className="h-12 rounded-xl bg-secondary/30 dark:bg-slate-900/50 border-none text-foreground">
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl">
@@ -153,7 +155,7 @@ export function TransactionDialog({
               <div className="space-y-2">
                 <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider ml-1">To Account</Label>
                 <Select name="toAccountId" defaultValue={initialData?.toAccountId} required>
-                  <SelectTrigger className="h-12 rounded-xl bg-secondary/30 border-none">
+                  <SelectTrigger className="h-12 rounded-xl bg-secondary/30 dark:bg-slate-900/50 border-none text-foreground">
                     <SelectValue placeholder="To" />
                   </SelectTrigger>
                   <SelectContent className="rounded-xl">
@@ -167,7 +169,7 @@ export function TransactionDialog({
               <div className="space-y-2">
                 <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider ml-1">Category</Label>
                 <Select value={category} onValueChange={setCategory} required>
-                  <SelectTrigger className="h-12 rounded-xl bg-secondary/30 border-none">
+                  <SelectTrigger className="h-12 rounded-xl bg-secondary/30 dark:bg-slate-900/50 border-none text-foreground">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent className="rounded-xl">
@@ -188,7 +190,7 @@ export function TransactionDialog({
                 value={customCategory}
                 onChange={(e) => setCustomCategory(e.target.value)}
                 placeholder="e.g. Subscriptions" 
-                className="h-12 rounded-xl bg-secondary/30 border-none"
+                className="h-12 rounded-xl bg-secondary/30 dark:bg-slate-900/50 border-none text-foreground"
                 required
               />
             </div>
@@ -196,7 +198,13 @@ export function TransactionDialog({
 
           <div className="space-y-2">
             <Label htmlFor="description" className="text-xs font-bold text-muted-foreground uppercase tracking-wider ml-1">Description</Label>
-            <Input id="description" name="description" placeholder="Add a note..." defaultValue={initialData?.description} className="h-12 rounded-xl bg-secondary/30 border-none" />
+            <Input 
+              id="description" 
+              name="description" 
+              placeholder="Add a note..." 
+              defaultValue={initialData?.description} 
+              className="h-12 rounded-xl bg-secondary/30 dark:bg-slate-900/50 border-none text-foreground" 
+            />
           </div>
 
           <DialogFooter className="pt-2">
