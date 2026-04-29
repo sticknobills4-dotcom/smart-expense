@@ -170,9 +170,8 @@ export default function DashboardPage() {
       <AccountDialog 
         open={isAccountDialogOpen} 
         onOpenChange={setIsAccountDialogOpen} 
-        onSubmit={async (data) => {
+        onSubmit={(data) => {
           addAccount(data);
-          setIsAccountDialogOpen(false);
         }} 
       />
     </div>

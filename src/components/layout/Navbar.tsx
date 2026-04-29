@@ -7,7 +7,6 @@ import {
   ArrowUpRight, 
   Wallet, 
   PieChart, 
-  PlusCircle, 
   BrainCircuit,
   LogOut,
   Target

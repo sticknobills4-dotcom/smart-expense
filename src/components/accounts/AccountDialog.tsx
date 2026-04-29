@@ -28,7 +28,7 @@ export function AccountDialog({
 }: { 
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (data: any) => Promise<void>;
+  onSubmit: (data: any) => void | Promise<void>;
   initialData?: Account;
 }) {
   const [loading, setLoading] = useState(false);
@@ -48,15 +48,17 @@ export function AccountDialog({
     e.preventDefault();
     setLoading(true);
     
-    const formData = new FormData(e.currentTarget);
-    const data = {
-      name: formData.get('name') as string,
-      type: type,
-      balance: Number(formData.get('balance')),
-      currency: 'USD'
-    };
-
     try {
+      const formData = new FormData(e.currentTarget);
+      const data = {
+        name: formData.get('name') as string,
+        type: type,
+        balance: Number(formData.get('balance')),
+        currency: 'USD'
+      };
+
+      if (!data.name) throw new Error("Account name is required");
+
       await onSubmit(data);
       onOpenChange(false);
     } catch (error) {
