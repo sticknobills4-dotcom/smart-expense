@@ -17,12 +17,14 @@ import {
   Plus
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { AccountDialog } from "@/components/accounts/AccountDialog";
 
 export default function DashboardPage() {
   const { user, accounts, transactions, loading, addTransaction, addAccount, isUserLoading } = useFinance();
   const router = useRouter();
+  const [isAccountDialogOpen, setIsAccountDialogOpen] = useState(false);
 
   useEffect(() => {
     if (!isUserLoading && !user) {
@@ -118,11 +120,10 @@ export default function DashboardPage() {
               <Card className="border-none shadow-sm">
                 <CardHeader className="flex flex-row items-center justify-between">
                   <CardTitle>My Accounts</CardTitle>
-                  <button onClick={() => {
-                    const name = prompt("Account Name:");
-                    const type = prompt("Type (Cash, Bank, Wallet, Savings):") as any;
-                    if (name && type) addAccount({ name, type, balance: 0, currency: 'USD' });
-                  }} className="p-1 hover:bg-secondary rounded-full transition-colors">
+                  <button 
+                    onClick={() => setIsAccountDialogOpen(true)} 
+                    className="p-1 hover:bg-secondary rounded-full transition-colors"
+                  >
                     <Plus className="w-5 h-5 text-primary" />
                   </button>
                 </CardHeader>
@@ -165,6 +166,15 @@ export default function DashboardPage() {
           </div>
         </div>
       </main>
+
+      <AccountDialog 
+        open={isAccountDialogOpen} 
+        onOpenChange={setIsAccountDialogOpen} 
+        onSubmit={async (data) => {
+          addAccount(data);
+          setIsAccountDialogOpen(false);
+        }} 
+      />
     </div>
   );
 }

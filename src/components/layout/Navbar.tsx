@@ -13,7 +13,7 @@ import {
   Target
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { auth } from '@/lib/firebase';
+import { useAuth } from '@/firebase';
 import { signOut } from 'firebase/auth';
 import { Button } from '@/components/ui/button';
 import {
@@ -24,7 +24,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const navItems = [
   { label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard' },
@@ -37,6 +37,7 @@ const navItems = [
 
 export function Navbar({ user }: { user: any }) {
   const pathname = usePathname();
+  const auth = useAuth();
 
   return (
     <>

@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useMemo } from 'react';
@@ -122,6 +121,12 @@ export function useFinance() {
     });
   };
 
+  const updateAccount = (id: string, data: Partial<Account>) => {
+    if (!user || !firestore) return;
+    const docRef = doc(firestore, 'users', user.uid, 'accounts', id);
+    updateDocumentNonBlocking(docRef, { ...data, updatedAt: new Date().toISOString() });
+  };
+
   const deleteAccount = (id: string) => {
     if (!user || !firestore) return;
     const docRef = doc(firestore, 'users', user.uid, 'accounts', id);
@@ -179,10 +184,12 @@ export function useFinance() {
     budgets,
     savingsGoals,
     loading,
+    isUserLoading,
     addTransaction,
     updateTransaction,
     deleteTransaction,
     addAccount,
+    updateAccount,
     deleteAccount,
     updateBudget,
     addSavingsGoal,

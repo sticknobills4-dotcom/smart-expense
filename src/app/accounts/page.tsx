@@ -4,16 +4,35 @@ import { useFinance } from "@/hooks/use-finance";
 import { Navbar } from "@/components/layout/Navbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CreditCard, Plus, Trash2, Wallet } from "lucide-react";
+import { CreditCard, Plus, Trash2, Wallet, Edit2 } from "lucide-react";
 import { AccountDialog } from "@/components/accounts/AccountDialog";
 import { useState } from "react";
 import { Account } from "@/types/finance";
 
 export default function AccountsPage() {
-  const { user, accounts, loading, deleteAccount, addAccount } = useFinance();
+  const { user, accounts, loading, deleteAccount, addAccount, updateAccount } = useFinance();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedAccount, setSelectedAccount] = useState<Account | undefined>();
 
   if (loading || !user) return <div className="p-10">Loading accounts...</div>;
+
+  const handleEdit = (acc: Account) => {
+    setSelectedAccount(acc);
+    setIsDialogOpen(true);
+  };
+
+  const handleAddNew = () => {
+    setSelectedAccount(undefined);
+    setIsDialogOpen(true);
+  };
+
+  const handleSubmit = async (data: any) => {
+    if (selectedAccount) {
+      updateAccount(selectedAccount.id, data);
+    } else {
+      addAccount(data);
+    }
+  };
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -23,7 +42,7 @@ export default function AccountsPage() {
         <div className="max-w-5xl mx-auto p-4 md:p-8 space-y-8">
           <div className="flex items-center justify-between">
             <h1 className="text-3xl font-bold tracking-tight">Financial Accounts</h1>
-            <Button onClick={() => setIsDialogOpen(true)} className="gap-2">
+            <Button onClick={handleAddNew} className="gap-2">
               <Plus className="w-5 h-5" />
               Add Account
             </Button>
@@ -37,16 +56,26 @@ export default function AccountsPage() {
                     <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-2">
                       <CreditCard className="w-6 h-6" />
                     </div>
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      className="text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={() => {
-                        if (confirm("Delete this account?")) deleteAccount(acc.id);
-                      }}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="text-muted-foreground hover:text-primary"
+                        onClick={() => handleEdit(acc)}
+                      >
+                        <Edit2 className="w-4 h-4" />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="text-muted-foreground hover:text-destructive"
+                        onClick={() => {
+                          if (confirm("Delete this account?")) deleteAccount(acc.id);
+                        }}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </div>
                   <CardTitle className="text-xl font-bold">{acc.name}</CardTitle>
                   <p className="text-xs text-muted-foreground uppercase tracking-widest font-semibold">{acc.type}</p>
@@ -68,7 +97,7 @@ export default function AccountsPage() {
                 </div>
                 <h3 className="text-lg font-bold">No accounts connected</h3>
                 <p className="text-muted-foreground max-w-xs mx-auto mt-2">Add your first account to start tracking your wealth.</p>
-                <Button onClick={() => setIsDialogOpen(true)} variant="outline" className="mt-6">Create Account</Button>
+                <Button onClick={handleAddNew} variant="outline" className="mt-6">Create Account</Button>
               </div>
             )}
           </div>
@@ -78,10 +107,8 @@ export default function AccountsPage() {
       <AccountDialog 
         open={isDialogOpen} 
         onOpenChange={setIsDialogOpen} 
-        onSubmit={async (data) => {
-          addAccount(data);
-          setIsDialogOpen(false);
-        }} 
+        initialData={selectedAccount}
+        onSubmit={handleSubmit} 
       />
     </div>
   );
