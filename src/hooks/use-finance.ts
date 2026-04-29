@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 import { collection, query, orderBy, doc } from 'firebase/firestore';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { 
@@ -53,7 +53,7 @@ export function useFinance() {
 
   const loading = isUserLoading || accountsLoading || transactionsLoading || budgetsLoading || goalsLoading;
 
-  const adjustBalance = useMemo(() => (accountId: string, amount: number) => {
+  const adjustBalance = useCallback((accountId: string, amount: number) => {
     if (!user || !firestore) return;
     const account = accounts.find(a => a.id === accountId);
     if (account) {
@@ -62,7 +62,7 @@ export function useFinance() {
     }
   }, [user, firestore, accounts]);
 
-  const applyTransactionBalance = useMemo(() => (t: Partial<Transaction>, multiply: number = 1) => {
+  const applyTransactionBalance = useCallback((t: Partial<Transaction>, multiply: number = 1) => {
     if (t.type === 'expense') {
       adjustBalance(t.accountId!, -t.amount! * multiply);
     } else if (t.type === 'income') {

@@ -1,6 +1,7 @@
+
 "use client"
 
-import React, { useMemo, useEffect, useState } from 'react';
+import React, { useMemo, useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
@@ -53,6 +54,7 @@ const NavItem = React.memo(({ item, isActive }: { item: typeof desktopNavItems[0
   return (
     <Link
       href={item.href}
+      prefetch={true}
       className={cn(
         "flex items-center justify-between px-4 py-3 rounded-2xl transition-all duration-200 group relative",
         isActive 
@@ -70,6 +72,24 @@ const NavItem = React.memo(({ item, isActive }: { item: typeof desktopNavItems[0
 });
 NavItem.displayName = 'NavItem';
 
+const MobileNavItem = React.memo(({ item, isActive }: { item: typeof navItems[0], isActive: boolean }) => {
+  const Icon = item.icon;
+  return (
+    <Link
+      href={item.href}
+      prefetch={true}
+      className={cn(
+        "flex flex-col items-center gap-1 transition-all duration-300 px-0.5 py-1 flex-1",
+        isActive ? "text-primary scale-105" : "text-slate-400 dark:text-slate-500"
+      )}
+    >
+      <Icon className={cn("w-5 h-5", isActive && "stroke-[2.5px]")} />
+      <span className="text-[8px] font-black tracking-tight text-center uppercase">{item.label}</span>
+    </Link>
+  );
+});
+MobileNavItem.displayName = 'MobileNavItem';
+
 export function Navbar({ user }: { user: any }) {
   const pathname = usePathname();
   const auth = useAuth();
@@ -81,15 +101,14 @@ export function Navbar({ user }: { user: any }) {
   useEffect(() => {
     setMounted(true);
     
-    // Performance: Throttle scroll listener
     let ticking = false;
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
           const currentScrollY = window.scrollY;
-          if (currentScrollY > lastScrollY && currentScrollY > 50) {
+          if (currentScrollY > lastScrollY && currentScrollY > 60) {
             setIsVisible(false);
-          } else {
+          } else if (currentScrollY < lastScrollY) {
             setIsVisible(true);
           }
           setLastScrollY(currentScrollY);
@@ -103,28 +122,17 @@ export function Navbar({ user }: { user: any }) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [lastScrollY]);
 
+  const toggleTheme = useCallback(() => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  }, [theme, setTheme]);
+
   const navigation = useMemo(() => desktopNavItems.map((item) => (
     <NavItem key={item.href} item={item} isActive={pathname === item.href} />
   )), [pathname]);
 
-  const mobileNavigation = useMemo(() => navItems.map((item) => {
-    const Icon = item.icon;
-    const isActive = pathname === item.href;
-    return (
-      <Link
-        key={item.href}
-        href={item.href}
-        prefetch={true}
-        className={cn(
-          "flex flex-col items-center gap-1 transition-all duration-300 px-0.5 py-1 flex-1",
-          isActive ? "text-primary scale-105" : "text-slate-400 dark:text-slate-500"
-        )}
-      >
-        <Icon className={cn("w-5 h-5", isActive && "stroke-[2.5px]")} />
-        <span className="text-[8px] font-black tracking-tight text-center uppercase">{item.label}</span>
-      </Link>
-    );
-  }), [pathname]);
+  const mobileNavigation = useMemo(() => navItems.map((item) => (
+    <MobileNavItem key={item.href} item={item} isActive={pathname === item.href} />
+  )), [pathname]);
 
   if (!mounted) return null;
 
@@ -133,7 +141,7 @@ export function Navbar({ user }: { user: any }) {
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex flex-col w-64 mac-sidebar h-screen fixed left-0 top-0 z-40">
         <div className="p-8">
-          <Link href="/dashboard" className="flex items-center gap-3 group">
+          <Link href="/dashboard" prefetch={true} className="flex items-center gap-3 group">
             <div className="w-10 h-10 bg-primary rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary/20 transition-all duration-300 group-hover:scale-110">
               <Wallet className="w-5 h-5" />
             </div>
@@ -151,7 +159,7 @@ export function Navbar({ user }: { user: any }) {
         <div className="p-6 border-t border-slate-200/50 dark:border-white/5 space-y-4">
           <Button 
             variant="ghost" 
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            onClick={toggleTheme}
             className="w-full justify-start gap-3 px-3 py-2 hover:bg-slate-200/40 dark:hover:bg-white/5 rounded-xl transition-all"
           >
             {theme === 'dark' ? <Sun className="w-4.5 h-4.5" /> : <Moon className="w-4.5 h-4.5" />}
@@ -187,7 +195,7 @@ export function Navbar({ user }: { user: any }) {
 
       {/* Mobile Top Floating Avatar */}
       <div className={cn(
-        "md:hidden fixed top-4 left-4 z-50 transition-all duration-300",
+        "md:hidden fixed top-4 left-4 z-50 transition-all duration-500 ease-in-out",
         isVisible ? "translate-y-0 opacity-100" : "-translate-y-20 opacity-0 pointer-events-none"
       )}>
         <DropdownMenu>
@@ -208,7 +216,7 @@ export function Navbar({ user }: { user: any }) {
             </div>
             <DropdownMenuSeparator className="bg-slate-100/50 dark:bg-white/5 mb-3" />
             <DropdownMenuItem 
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              onClick={toggleTheme}
               className="rounded-2xl px-4 py-3 cursor-pointer"
             >
               {theme === 'dark' ? <Sun className="mr-3 h-5 w-5" /> : <Moon className="mr-3 h-5 w-5" />}
@@ -225,7 +233,7 @@ export function Navbar({ user }: { user: any }) {
         </DropdownMenu>
       </div>
 
-      {/* Mobile Bottom Nav - Optimized for 6 items */}
+      {/* Mobile Bottom Nav */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 glass-nav border-t flex justify-around items-center h-16 px-1 z-50 rounded-t-[2.5rem] shadow-[0_-8px_30px_rgb(0,0,0,0.04)]">
         {mobileNavigation}
       </nav>

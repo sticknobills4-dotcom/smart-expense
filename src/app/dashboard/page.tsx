@@ -1,6 +1,7 @@
 
 "use client"
 
+import React, { useEffect, useState, useMemo } from "react";
 import { useFinance } from "@/hooks/use-finance";
 import { Navbar } from "@/components/layout/Navbar";
 import { BalanceOverview } from "@/components/dashboard/BalanceOverview";
@@ -20,9 +21,66 @@ import {
   LayoutGrid
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { AccountDialog } from "@/components/accounts/AccountDialog";
+
+// Memoize section components for performance
+const RecentActivity = React.memo(({ transactions, router }: { transactions: any[], router: any }) => (
+  <Card className="border-none shadow-[0_8px_40px_rgba(0,0,0,0.04)] rounded-[2rem] overflow-hidden">
+    <CardHeader className="flex flex-row items-center justify-between p-6 md:p-8 pb-4">
+      <div className="flex items-center gap-3">
+        <div className="p-2 bg-indigo-50 dark:bg-indigo-950/30 rounded-xl">
+          <ArrowLeftRight className="w-5 h-5 text-primary" />
+        </div>
+        <CardTitle className="text-xl md:text-2xl text-foreground">Recent Activity</CardTitle>
+      </div>
+      <button 
+        onClick={() => router.push('/transactions')} 
+        className="text-xs md:text-sm text-primary font-bold hover:bg-indigo-50 dark:hover:bg-indigo-950/30 px-3 py-1.5 md:px-4 md:py-2 rounded-xl transition-all"
+      >
+        All
+      </button>
+    </CardHeader>
+    <CardContent className="px-4 md:px-8 pb-6 md:pb-8">
+      <div className="space-y-2">
+        {transactions.length > 0 ? (
+          transactions.map((t) => (
+            <div key={t.id} className="flex items-center justify-between p-3 md:p-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-all group">
+              <div className="flex items-center gap-3 md:gap-5 min-w-0">
+                <div className={cn(
+                  "w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl flex items-center justify-center transition-all group-hover:scale-110 shadow-sm shrink-0",
+                  t.type === 'income' ? "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600" : 
+                  t.type === 'expense' ? "bg-red-50 dark:bg-red-950/30 text-red-600" : 
+                  "bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600"
+                )}>
+                  {t.type === 'income' ? <ArrowDownLeft className="w-5 h-5 md:w-6 md:h-6" /> : 
+                   t.type === 'expense' ? <ArrowUpRight className="w-5 h-5 md:w-6 md:h-6" /> : 
+                   <ArrowLeftRight className="w-5 h-5 md:w-6 md:h-6" />}
+                </div>
+                <div className="min-w-0">
+                  <p className="font-bold text-foreground mb-0.5 truncate">{t.category || t.description || 'General'}</p>
+                  <p className="text-[10px] md:text-xs text-muted-foreground font-semibold">{format(new Date(t.date), 'MMM dd, yyyy')}</p>
+                </div>
+              </div>
+              <p className={cn(
+                "font-black text-base md:text-lg shrink-0 ml-2",
+                t.type === 'income' ? "text-emerald-500" : t.type === 'expense' ? "text-red-500" : "text-indigo-500"
+              )}>
+                {t.type === 'expense' ? '-' : t.type === 'income' ? '+' : ''}${t.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+              </p>
+            </div>
+          ))
+        ) : (
+          <div className="py-10 md:py-20 text-center space-y-3">
+            <LayoutGrid className="w-10 h-10 md:w-12 md:h-12 text-slate-200 dark:text-slate-800 mx-auto" />
+            <p className="text-muted-foreground font-medium italic">No transactions captured yet.</p>
+          </div>
+        )}
+      </div>
+    </CardContent>
+  </Card>
+));
+RecentActivity.displayName = 'RecentActivity';
 
 export default function DashboardPage() {
   const { user, accounts, transactions, loading, addTransaction, addAccount, isUserLoading } = useFinance();
@@ -34,6 +92,8 @@ export default function DashboardPage() {
       router.push('/login');
     }
   }, [user, isUserLoading, router]);
+
+  const recentTransactions = useMemo(() => (transactions || []).slice(0, 5), [transactions]);
 
   if (loading || !user) {
     return (
@@ -51,8 +111,6 @@ export default function DashboardPage() {
       </div>
     );
   }
-
-  const recentTransactions = (transactions || []).slice(0, 5);
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -73,64 +131,11 @@ export default function DashboardPage() {
 
           <BalanceOverview accounts={accounts} transactions={transactions} />
 
-          {/* Visual Insights Section */}
           <DashboardCharts transactions={transactions} />
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
             <div className="lg:col-span-8 space-y-6 md:space-y-8">
-              <Card className="border-none shadow-[0_8px_40px_rgba(0,0,0,0.04)] rounded-[2rem] overflow-hidden">
-                <CardHeader className="flex flex-row items-center justify-between p-6 md:p-8 pb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-indigo-50 dark:bg-indigo-950/30 rounded-xl">
-                      <ArrowLeftRight className="w-5 h-5 text-primary" />
-                    </div>
-                    <CardTitle className="text-xl md:text-2xl text-foreground">Recent Activity</CardTitle>
-                  </div>
-                  <button 
-                    onClick={() => router.push('/transactions')} 
-                    className="text-xs md:text-sm text-primary font-bold hover:bg-indigo-50 dark:hover:bg-indigo-950/30 px-3 py-1.5 md:px-4 md:py-2 rounded-xl transition-all"
-                  >
-                    All
-                  </button>
-                </CardHeader>
-                <CardContent className="px-4 md:px-8 pb-6 md:pb-8">
-                  <div className="space-y-2">
-                    {recentTransactions.length > 0 ? (
-                      recentTransactions.map((t) => (
-                        <div key={t.id} className="flex items-center justify-between p-3 md:p-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-all group">
-                          <div className="flex items-center gap-3 md:gap-5 min-w-0">
-                            <div className={cn(
-                              "w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl flex items-center justify-center transition-all group-hover:scale-110 shadow-sm shrink-0",
-                              t.type === 'income' ? "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600" : 
-                              t.type === 'expense' ? "bg-red-50 dark:bg-red-950/30 text-red-600" : 
-                              "bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600"
-                            )}>
-                              {t.type === 'income' ? <ArrowDownLeft className="w-5 h-5 md:w-6 md:h-6" /> : 
-                               t.type === 'expense' ? <ArrowUpRight className="w-5 h-5 md:w-6 md:h-6" /> : 
-                               <ArrowLeftRight className="w-5 h-5 md:w-6 md:h-6" />}
-                            </div>
-                            <div className="min-w-0">
-                              <p className="font-bold text-foreground mb-0.5 truncate">{t.category || t.description || 'General'}</p>
-                              <p className="text-[10px] md:text-xs text-muted-foreground font-semibold">{format(new Date(t.date), 'MMM dd, yyyy')}</p>
-                            </div>
-                          </div>
-                          <p className={cn(
-                            "font-black text-base md:text-lg shrink-0 ml-2",
-                            t.type === 'income' ? "text-emerald-500" : t.type === 'expense' ? "text-red-500" : "text-indigo-500"
-                          )}>
-                            {t.type === 'expense' ? '-' : t.type === 'income' ? '+' : ''}${t.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                          </p>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="py-10 md:py-20 text-center space-y-3">
-                        <LayoutGrid className="w-10 h-10 md:w-12 md:h-12 text-slate-200 dark:text-slate-800 mx-auto" />
-                        <p className="text-muted-foreground font-medium italic">No transactions captured yet.</p>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
+              <RecentActivity transactions={recentTransactions} router={router} />
             </div>
 
             <div className="lg:col-span-4 space-y-6 md:space-y-8">
