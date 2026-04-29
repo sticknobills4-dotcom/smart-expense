@@ -32,21 +32,23 @@ export function AccountDialog({
   initialData?: Account;
 }) {
   const [loading, setLoading] = useState(false);
-  const [type, setType] = useState<AccountType>(initialData?.type || 'Bank');
+  const [type, setType] = useState<AccountType>('Bank');
 
   useEffect(() => {
-    if (initialData) {
-      setType(initialData.type);
-    } else {
-      setType('Bank');
+    if (open) {
+      if (initialData) {
+        setType(initialData.type);
+      } else {
+        setType('Bank');
+      }
     }
   }, [initialData, open]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    const formData = new FormData(e.currentTarget);
     
+    const formData = new FormData(e.currentTarget);
     const data = {
       name: formData.get('name') as string,
       type: type,
@@ -58,7 +60,7 @@ export function AccountDialog({
       await onSubmit(data);
       onOpenChange(false);
     } catch (error) {
-      console.error(error);
+      console.error("Failed to submit account:", error);
     } finally {
       setLoading(false);
     }
@@ -75,7 +77,13 @@ export function AccountDialog({
         <form onSubmit={handleSubmit} className="space-y-4 py-4">
           <div className="space-y-2">
             <Label htmlFor="name">Account Name</Label>
-            <Input id="name" name="name" defaultValue={initialData?.name} placeholder="e.g. Personal Checking" required />
+            <Input 
+              id="name" 
+              name="name" 
+              defaultValue={initialData?.name} 
+              placeholder="e.g. Personal Checking" 
+              required 
+            />
           </div>
 
           <div className="space-y-2">
@@ -95,8 +103,15 @@ export function AccountDialog({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="balance">Initial Balance</Label>
-            <Input id="balance" name="balance" type="number" step="0.01" defaultValue={initialData?.balance || 0} required />
+            <Label htmlFor="balance">Account Balance</Label>
+            <Input 
+              id="balance" 
+              name="balance" 
+              type="number" 
+              step="0.01" 
+              defaultValue={initialData?.balance || 0} 
+              required 
+            />
           </div>
 
           <DialogFooter className="pt-4">
