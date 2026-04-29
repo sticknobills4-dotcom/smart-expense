@@ -125,7 +125,7 @@ export function FinanceChat() {
         </CardContent>
       </Card>
 
-      {/* Fixed Chat Input Bar */}
+      {/* Fixed Chat Input Bar positioned above mobile nav */}
       <div className="fixed bottom-16 left-0 right-0 md:absolute md:bottom-0 p-3 md:p-4 border-t border-primary/10 bg-white/95 dark:bg-black/95 backdrop-blur-xl z-[45] md:rounded-b-[2rem] w-full max-w-5xl mx-auto">
         <div className="flex gap-2 relative">
           <Input 

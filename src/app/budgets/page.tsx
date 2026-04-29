@@ -57,28 +57,28 @@ export default function BudgetsPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="bg-indigo-600 p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] shadow-xl shadow-indigo-600/20 flex items-center gap-4 md:gap-6 text-white">
-              <div className="p-3 md:p-4 bg-white/20 rounded-2xl backdrop-blur-md shrink-0">
+            <div className="bg-indigo-600 p-6 md:p-8 rounded-[2rem] shadow-xl shadow-indigo-600/20 flex items-center gap-4 text-white">
+              <div className="p-3 bg-white/20 rounded-2xl backdrop-blur-md shrink-0">
                 <PieChart className="w-6 h-6 md:w-8 md:h-8" />
               </div>
-              <div>
-                <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-white/80">Total Budget</p>
-                <h3 className="text-2xl md:text-3xl font-black text-white">₹{totalBudget.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
+              <div className="min-w-0">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-white/80">Total Budget</p>
+                <h3 className="text-xl md:text-2xl font-black text-white truncate">₹{totalBudget.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
               </div>
             </div>
-            <div className="bg-emerald-600 p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] shadow-xl shadow-emerald-600/20 flex items-center gap-4 md:gap-6 text-white">
-              <div className="p-3 md:p-4 bg-black/10 rounded-2xl backdrop-blur-md shrink-0">
+            <div className="bg-emerald-600 p-6 md:p-8 rounded-[2rem] shadow-xl shadow-emerald-600/20 flex items-center gap-4 text-white">
+              <div className="p-3 bg-black/10 rounded-2xl backdrop-blur-md shrink-0">
                 <TrendingUp className="w-6 h-6 md:w-8 md:h-8" />
               </div>
-              <div>
-                <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-white/80">Available</p>
-                <h3 className="text-2xl md:text-3xl font-black text-white">₹{Math.max(0, totalBudget - totalSpent).toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
+              <div className="min-w-0">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-white/80">Available</p>
+                <h3 className="text-xl md:text-2xl font-black text-white truncate">₹{Math.max(0, totalBudget - totalSpent).toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
               </div>
             </div>
           </div>
 
           <div className="grid grid-cols-1 gap-6">
-            <Card className="border-none shadow-[0_20px_50px_rgba(0,0,0,0.03)] rounded-[2rem] md:rounded-[3rem] overflow-hidden">
+            <Card className="border-none shadow-sm rounded-[2rem] overflow-hidden">
               <CardHeader className="p-6 md:p-8 pb-0">
                 <CardTitle className="text-xl md:text-2xl font-black text-foreground">Monthly Targets</CardTitle>
               </CardHeader>
@@ -128,7 +128,7 @@ export default function BudgetsPage() {
                       <div 
                         className={cn(
                           "h-full transition-all duration-1000 ease-out rounded-full",
-                          stat.percent > 90 ? "bg-destructive" : "bg-primary"
+                          stat.percent > 90 ? "bg-destructive" : "bg-accent"
                         )}
                         style={{ width: `${stat.percent}%` }}
                       />
