@@ -87,6 +87,40 @@ export function Navbar({ user }: { user: any }) {
 
   return (
     <>
+      {/* Mobile Top Header (Brand + Profile/Logout) */}
+      <header className="md:hidden sticky top-0 z-40 w-full glass-nav px-4 h-16 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white shadow-sm">
+            <Wallet className="w-4 h-4" />
+          </div>
+          <span className="text-lg font-black tracking-tight text-slate-800">SmartExpense</span>
+        </div>
+        
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-10 w-10 rounded-full p-0">
+              <Avatar className="h-8 w-8 border border-slate-200">
+                <AvatarImage src={user?.photoURL || ''} />
+                <AvatarFallback className="bg-primary/10 text-primary text-[10px] font-bold">
+                  {user?.displayName?.charAt(0) || user?.email?.charAt(0) || 'U'}
+                </AvatarFallback>
+              </Avatar>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56 mac-glass rounded-2xl p-2 mt-2">
+            <div className="px-3 py-2 mb-1">
+              <p className="text-xs font-bold text-slate-800 truncate">{user?.displayName || 'User'}</p>
+              <p className="text-[10px] text-slate-500 truncate">{user?.email}</p>
+            </div>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => signOut(auth)} className="text-destructive focus:text-destructive focus:bg-destructive/10 rounded-xl m-1 px-3 py-2.5">
+              <LogOut className="mr-2 h-4 w-4" />
+              <span className="font-semibold">Log out</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </header>
+
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex flex-col w-64 mac-sidebar h-screen fixed left-0 top-0 z-40">
         <div className="p-8">
