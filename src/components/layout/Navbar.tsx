@@ -133,6 +133,36 @@ export function Navbar({ user }: { user: any }) {
         </div>
       </aside>
 
+      {/* Mobile Top Floating Avatar */}
+      <div className="md:hidden fixed top-4 left-4 z-50">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-11 w-11 p-0 rounded-full border-2 border-white shadow-lg bg-white/80 backdrop-blur-md overflow-hidden active:scale-90 transition-transform">
+              <Avatar className="h-full w-full">
+                <AvatarImage src={user?.photoURL || ''} />
+                <AvatarFallback className="bg-primary/10 text-primary font-black text-sm">
+                  {user?.displayName?.charAt(0) || user?.email?.charAt(0) || 'U'}
+                </AvatarFallback>
+              </Avatar>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="w-72 mac-glass rounded-[2.5rem] p-5 mt-2 ml-2 shadow-2xl border-white/40">
+            <div className="space-y-1 mb-5 px-1">
+              <p className="text-base font-black text-slate-800 tracking-tight">{user?.displayName || 'Smart User'}</p>
+              <p className="text-[11px] text-slate-400 font-bold truncate tracking-wide">{user?.email}</p>
+            </div>
+            <DropdownMenuSeparator className="bg-slate-100/50 mb-3" />
+            <DropdownMenuItem 
+              onClick={() => signOut(auth)} 
+              className="text-destructive focus:text-destructive focus:bg-destructive/5 rounded-2xl px-4 py-3 cursor-pointer"
+            >
+              <LogOut className="mr-3 h-5 w-5" />
+              <span className="font-black text-sm">Log out</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+
       {/* Mobile Bottom Nav */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 glass-nav border-t flex justify-around items-center h-20 px-2 z-50 rounded-t-[2.5rem] shadow-[0_-8px_30px_rgb(0,0,0,0.04)]">
         {mobileNavigation}

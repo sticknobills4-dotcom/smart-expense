@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useFinance } from "@/hooks/use-finance";
@@ -43,7 +44,7 @@ export default function SavingsGoalsPage() {
       <main className="flex-1 md:ml-64 pb-20 md:pb-8">
         <div className="max-w-5xl mx-auto p-4 md:p-8 space-y-8">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <h1 className="text-3xl font-bold tracking-tight">Savings Goals</h1>
+            <h1 className="text-3xl font-bold tracking-tight ml-14 md:ml-0">Savings Goals</h1>
             <Button onClick={handleAddNew} className="gap-2 w-full sm:w-auto">
               <Plus className="w-5 h-5" />
               New Goal
