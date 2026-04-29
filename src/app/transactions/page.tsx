@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useFinance } from "@/hooks/use-finance";

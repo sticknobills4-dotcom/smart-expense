@@ -49,7 +49,6 @@ export default function DashboardPage() {
     );
   }
 
-  // Safe slice even if transactions was null (though useFinance now ensures it is [])
   const recentTransactions = (transactions || []).slice(0, 5);
 
   return (

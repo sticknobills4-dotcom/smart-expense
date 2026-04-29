@@ -3,6 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { TrendingUp, TrendingDown, DollarSign } from "lucide-react";
 import { Account, Transaction } from "@/types/finance";
+import { cn } from "@/lib/utils";
 
 export function BalanceOverview({ 
   accounts, 
@@ -71,5 +72,3 @@ export function BalanceOverview({
     </div>
   );
 }
-
-import { cn } from "@/lib/utils";
