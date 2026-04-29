@@ -87,7 +87,7 @@ export function BalanceOverview({
             <div className="space-y-0.5 md:space-y-1 relative z-10 min-w-0">
               <p className="text-[9px] md:text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em]">{stat.label}</p>
               <h3 className="text-2xl md:text-3xl font-black tracking-tighter text-foreground truncate">
-                ${stat.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                ₹{stat.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </h3>
             </div>
             <div className="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity pointer-events-none hidden md:block">

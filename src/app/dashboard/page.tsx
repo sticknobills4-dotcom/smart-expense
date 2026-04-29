@@ -24,7 +24,6 @@ import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { AccountDialog } from "@/components/accounts/AccountDialog";
 
-// Memoize section components for performance
 const RecentActivity = React.memo(({ transactions, router }: { transactions: any[], router: any }) => (
   <Card className="border-none shadow-[0_8px_40px_rgba(0,0,0,0.04)] rounded-[2rem] overflow-hidden">
     <CardHeader className="flex flex-row items-center justify-between p-6 md:p-8 pb-4">
@@ -66,7 +65,7 @@ const RecentActivity = React.memo(({ transactions, router }: { transactions: any
                 "font-black text-base md:text-lg shrink-0 ml-2",
                 t.type === 'income' ? "text-emerald-500" : t.type === 'expense' ? "text-red-500" : "text-indigo-500"
               )}>
-                {t.type === 'expense' ? '-' : t.type === 'income' ? '+' : ''}${t.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                {t.type === 'expense' ? '-' : t.type === 'income' ? '+' : ''}₹{t.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
               </p>
             </div>
           ))
@@ -161,7 +160,7 @@ export default function DashboardPage() {
                           <p className="text-[9px] md:text-[10px] text-muted-foreground font-bold uppercase tracking-wider">{acc.type}</p>
                         </div>
                       </div>
-                      <p className="font-black text-sm md:text-base text-foreground shrink-0 ml-2">${acc.balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+                      <p className="font-black text-sm md:text-base text-foreground shrink-0 ml-2">₹{acc.balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
                     </div>
                   ))}
                   {accounts.length === 0 && (

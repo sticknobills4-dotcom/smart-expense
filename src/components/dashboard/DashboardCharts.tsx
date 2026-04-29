@@ -19,7 +19,6 @@ import { Transaction } from "@/types/finance"
 import { cn } from "@/lib/utils"
 
 export function DashboardCharts({ transactions }: { transactions: Transaction[] }) {
-  // 1. Process Data for Category Pie Chart (Expenses only)
   const categoryData = useMemo(() => {
     const expenses = transactions.filter(t => t.type === 'expense')
     const counts: Record<string, number> = {}
@@ -34,11 +33,9 @@ export function DashboardCharts({ transactions }: { transactions: Transaction[] 
     })).sort((a, b) => b.value - a.value).slice(0, 6)
   }, [transactions])
 
-  // 2. Process Data for Income vs Expense Bar Chart
   const monthlyData = useMemo(() => {
     const last6Months: Record<string, { month: string, income: number, expense: number }> = {}
     
-    // Get last 6 months keys
     for (let i = 5; i >= 0; i--) {
       const d = new Date()
       d.setMonth(d.getMonth() - i)
@@ -71,11 +68,10 @@ export function DashboardCharts({ transactions }: { transactions: Transaction[] 
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
-      {/* Category Breakdown Donut */}
       <Card className="border-none shadow-[0_8px_40px_rgba(0,0,0,0.04)] rounded-[2rem] overflow-hidden">
         <CardHeader className="p-6 md:p-8 pb-0">
           <CardTitle className="text-xl font-black text-foreground">Spending Mix</CardTitle>
-          <CardDescription>Top expense categories this period</CardDescription>
+          <CardDescription>Top expense categories</CardDescription>
         </CardHeader>
         <CardContent className="p-6 md:p-8 pt-0 flex flex-col items-center">
           <div className="h-[250px] w-full mt-4">
@@ -98,9 +94,9 @@ export function DashboardCharts({ transactions }: { transactions: Transaction[] 
                   content={({ active, payload }) => {
                     if (active && payload && payload.length) {
                       return (
-                        <div className="bg-white dark:bg-slate-950 p-4 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 ring-1 ring-black/5">
+                        <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 ring-1 ring-black/5">
                           <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest mb-1">{payload[0].name}</p>
-                          <p className="text-xl font-black text-foreground">${Number(payload[0].value).toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+                          <p className="text-xl font-black text-foreground">₹{Number(payload[0].value).toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
                         </div>
                       )
                     }
@@ -121,7 +117,6 @@ export function DashboardCharts({ transactions }: { transactions: Transaction[] 
         </CardContent>
       </Card>
 
-      {/* Monthly Trends Bar Chart */}
       <Card className="border-none shadow-[0_8px_40px_rgba(0,0,0,0.04)] rounded-[2rem] overflow-hidden">
         <CardHeader className="p-6 md:p-8 pb-0">
           <CardTitle className="text-xl font-black text-foreground">Cash Flow</CardTitle>
@@ -145,7 +140,7 @@ export function DashboardCharts({ transactions }: { transactions: Transaction[] 
                   content={({ active, payload }) => {
                     if (active && payload && payload.length) {
                       return (
-                        <div className="bg-white dark:bg-slate-950 p-4 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 ring-1 ring-black/5 space-y-3">
+                        <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 ring-1 ring-black/5 space-y-3">
                           <p className="text-[11px] font-black text-foreground border-b dark:border-slate-800 pb-2 mb-2">{(payload[0]?.payload as any).month}</p>
                           {payload.map((p, i) => (
                             <div key={i} className="flex items-center justify-between gap-8">
@@ -154,7 +149,7 @@ export function DashboardCharts({ transactions }: { transactions: Transaction[] 
                                 <span className="text-[10px] font-black uppercase text-muted-foreground tracking-wider">{p.name}</span>
                               </div>
                               <span className={cn("text-sm font-black tracking-tight", p.name === 'income' ? 'text-emerald-500' : 'text-primary')}>
-                                ${Number(p.value).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                                ₹{Number(p.value).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                               </span>
                             </div>
                           ))}
