@@ -44,7 +44,7 @@ export default function TransactionsPage() {
         <div className="max-w-6xl mx-auto p-4 md:p-8 space-y-8">
           
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <h1 className="text-3xl font-bold tracking-tight">Transactions</h1>
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900">Transactions</h1>
             <TransactionDialog accounts={accounts} onSubmit={addTransaction} />
           </div>
 
@@ -60,28 +60,28 @@ export default function TransactionsPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-3xl shadow-sm border-none overflow-hidden">
+          <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.02)] border-none overflow-hidden mac-card">
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead>
-                  <tr className="border-b bg-secondary/20">
-                    <th className="p-5 text-xs font-bold uppercase tracking-wider text-muted-foreground">Status</th>
-                    <th className="p-5 text-xs font-bold uppercase tracking-wider text-muted-foreground">Detail</th>
-                    <th className="p-5 text-xs font-bold uppercase tracking-wider text-muted-foreground">Account</th>
-                    <th className="p-5 text-xs font-bold uppercase tracking-wider text-muted-foreground">Date</th>
-                    <th className="p-5 text-xs font-bold uppercase tracking-wider text-muted-foreground text-right">Amount</th>
-                    <th className="p-5 text-xs font-bold uppercase tracking-wider text-muted-foreground text-center">Actions</th>
+                  <tr className="border-b bg-slate-50/50">
+                    <th className="p-5 text-[10px] font-bold uppercase tracking-widest text-slate-400">Status</th>
+                    <th className="p-5 text-[10px] font-bold uppercase tracking-widest text-slate-400">Detail</th>
+                    <th className="p-5 text-[10px] font-bold uppercase tracking-widest text-slate-400">Account</th>
+                    <th className="p-5 text-[10px] font-bold uppercase tracking-widest text-slate-400">Date</th>
+                    <th className="p-5 text-[10px] font-bold uppercase tracking-widest text-slate-400 text-right">Amount</th>
+                    <th className="p-5 text-[10px] font-bold uppercase tracking-widest text-slate-400 text-center">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y">
+                <tbody className="divide-y divide-slate-100">
                   {filtered.map((t) => (
-                    <tr key={t.id} className="hover:bg-secondary/10 transition-colors group">
+                    <tr key={t.id} className="hover:bg-slate-50/50 transition-colors group">
                       <td className="p-5">
                         <div className={cn(
                           "w-10 h-10 rounded-2xl flex items-center justify-center shadow-sm transition-transform group-hover:scale-110",
-                          t.type === 'income' ? "bg-accent/10 text-accent" : 
-                          t.type === 'expense' ? "bg-destructive/10 text-destructive" : 
-                          "bg-primary/10 text-primary"
+                          t.type === 'income' ? "bg-emerald-50 text-emerald-600" : 
+                          t.type === 'expense' ? "bg-red-50 text-red-600" : 
+                          "bg-indigo-50 text-indigo-600"
                         )}>
                           {t.type === 'income' ? <ArrowDownLeft className="w-5 h-5" /> : 
                            t.type === 'expense' ? <ArrowUpRight className="w-5 h-5" /> : 
@@ -89,27 +89,27 @@ export default function TransactionsPage() {
                         </div>
                       </td>
                       <td className="p-5">
-                        <p className="font-bold leading-tight">{t.category || (t.type === 'transfer' ? 'Transfer' : 'Uncategorized')}</p>
-                        <p className="text-xs text-muted-foreground">{t.description || 'No description'}</p>
+                        <p className="font-bold text-slate-900 leading-tight">{t.category || (t.type === 'transfer' ? 'Transfer' : 'Uncategorized')}</p>
+                        <p className="text-xs text-slate-400 font-medium">{t.description || 'No description'}</p>
                       </td>
                       <td className="p-5">
                         <div className="flex flex-col gap-1">
-                          <span className="text-xs font-bold px-3 py-1 bg-secondary rounded-full uppercase tracking-tighter w-fit">
+                          <span className="text-[10px] font-bold px-3 py-1 bg-slate-100 text-slate-600 rounded-full uppercase tracking-tight w-fit">
                             {accounts.find(a => a.id === t.accountId)?.name || 'Account'}
                           </span>
                           {t.type === 'transfer' && (
-                            <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                            <span className="text-[10px] text-slate-400 flex items-center gap-1 font-medium">
                               to: {accounts.find(a => a.id === t.toAccountId)?.name || '...'}
                             </span>
                           )}
                         </div>
                       </td>
-                      <td className="p-5 text-sm font-medium text-muted-foreground">
+                      <td className="p-5 text-sm font-semibold text-slate-500">
                         {format(new Date(t.date), 'MMM dd, yyyy')}
                       </td>
                       <td className={cn(
                         "p-5 text-right font-black text-lg",
-                        t.type === 'income' ? "text-accent" : t.type === 'expense' ? "text-destructive" : "text-primary"
+                        t.type === 'income' ? "text-emerald-500" : t.type === 'expense' ? "text-red-500" : "text-indigo-500"
                       )}>
                         {t.type === 'expense' ? '-' : t.type === 'income' ? '+' : ''}${t.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                       </td>
@@ -118,7 +118,7 @@ export default function TransactionsPage() {
                           <Button 
                             variant="ghost" 
                             size="icon" 
-                            className="h-8 w-8 text-muted-foreground hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity"
+                            className="h-8 w-8 text-slate-400 hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity"
                             onClick={() => handleEditClick(t)}
                           >
                             <Edit2 className="w-4 h-4" />
@@ -126,7 +126,7 @@ export default function TransactionsPage() {
                           <Button 
                             variant="ghost" 
                             size="icon" 
-                            className="h-8 w-8 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                            className="h-8 w-8 text-slate-400 hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
                             onClick={() => {
                               if (confirm("Delete this transaction? This will also revert the account balance.")) {
                                 deleteTransaction(t.id);
@@ -141,7 +141,7 @@ export default function TransactionsPage() {
                   ))}
                   {filtered.length === 0 && (
                     <tr>
-                      <td colSpan={6} className="p-20 text-center text-muted-foreground font-medium italic">
+                      <td colSpan={6} className="p-20 text-center text-slate-400 font-medium italic">
                         No transactions found matching your criteria.
                       </td>
                     </tr>
