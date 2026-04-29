@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useEffect } from "react";
@@ -9,7 +10,7 @@ export default function RootPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Wait for auth to settle before redirecting
+    // Prevent redirect until user state is determined
     if (isUserLoading) return;
 
     if (user) {
@@ -22,8 +23,8 @@ export default function RootPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="flex flex-col items-center gap-4">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-        <p className="text-slate-400 font-medium animate-pulse">Authenticating...</p>
+        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary"></div>
+        <p className="text-muted-foreground text-xs font-bold uppercase tracking-widest animate-pulse">Syncing Securely...</p>
       </div>
     </div>
   );

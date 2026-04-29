@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useFinance } from "@/hooks/use-finance";
@@ -51,28 +52,28 @@ export default function BudgetsPage() {
         <div className="max-w-4xl mx-auto p-4 md:p-10 space-y-8 md:space-y-10">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <h1 className="text-3xl md:text-4xl font-black tracking-tight text-foreground ml-14 md:ml-0">Budget Planner</h1>
-            <div className="bg-primary/10 text-primary px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border border-primary/20 w-fit">
+            <div className="bg-primary/10 text-primary px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-primary/20 w-fit">
               {format(new Date(), 'MMMM yyyy')}
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="bg-primary p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] shadow-xl shadow-primary/20 flex items-center gap-4 md:gap-6 text-white">
+            <div className="bg-indigo-600 p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] shadow-xl shadow-indigo-600/20 flex items-center gap-4 md:gap-6 text-white">
               <div className="p-3 md:p-4 bg-white/20 rounded-2xl backdrop-blur-md shrink-0">
                 <PieChart className="w-6 h-6 md:w-8 md:h-8" />
               </div>
               <div>
                 <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-white/80">Total Budget</p>
-                <h3 className="text-2xl md:text-4xl font-black text-white">₹{totalBudget.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
+                <h3 className="text-2xl md:text-3xl font-black text-white">₹{totalBudget.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
               </div>
             </div>
-            <div className="bg-accent p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] shadow-xl shadow-accent/20 flex items-center gap-4 md:gap-6 text-white">
+            <div className="bg-emerald-600 p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] shadow-xl shadow-emerald-600/20 flex items-center gap-4 md:gap-6 text-white">
               <div className="p-3 md:p-4 bg-black/10 rounded-2xl backdrop-blur-md shrink-0">
                 <TrendingUp className="w-6 h-6 md:w-8 md:h-8" />
               </div>
               <div>
                 <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-white/80">Available</p>
-                <h3 className="text-2xl md:text-4xl font-black text-white">₹{Math.max(0, totalBudget - totalSpent).toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
+                <h3 className="text-2xl md:text-3xl font-black text-white">₹{Math.max(0, totalBudget - totalSpent).toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
               </div>
             </div>
           </div>
@@ -118,13 +119,13 @@ export default function BudgetsPage() {
                             setEditingCategory(stat.category);
                             setTempAmount(stat.limit.toString());
                           }}
-                          className="text-xs font-black uppercase tracking-widest text-primary hover:bg-primary/5 px-4 py-2 rounded-xl transition-all border border-primary/20 w-fit"
+                          className="text-[10px] font-black uppercase tracking-widest text-primary hover:bg-primary/5 px-4 py-2 rounded-xl transition-all border border-primary/20 w-fit"
                         >
                           {stat.limit > 0 ? 'Adjust' : 'Set Budget'}
                         </button>
                       )}
                     </div>
-                    <div className="relative h-3 w-full bg-secondary rounded-full overflow-hidden">
+                    <div className="relative h-2.5 w-full bg-secondary rounded-full overflow-hidden">
                       <div 
                         className={cn(
                           "h-full transition-all duration-1000 ease-out rounded-full",
