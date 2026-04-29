@@ -37,7 +37,6 @@ const navItems = [
   { label: 'Insights', icon: BrainCircuit, href: '/insights' },
 ];
 
-// Sub-component for nav items to optimize re-renders
 const NavItem = React.memo(({ item, isActive }: { item: typeof navItems[0], isActive: boolean }) => {
   const Icon = item.icon;
   return (
@@ -76,7 +75,7 @@ export function Navbar({ user }: { user: any }) {
         key={item.href}
         href={item.href}
         className={cn(
-          "flex flex-col items-center gap-1.5 transition-all duration-300 px-2 py-1",
+          "flex flex-col items-center gap-1.5 transition-all duration-300 px-2 py-1 flex-1",
           isActive ? "text-primary scale-110" : "text-slate-400"
         )}
       >
@@ -88,7 +87,7 @@ export function Navbar({ user }: { user: any }) {
 
   return (
     <>
-      {/* Desktop MacOS Sidebar */}
+      {/* Desktop Sidebar */}
       <aside className="hidden md:flex flex-col w-64 mac-sidebar h-screen fixed left-0 top-0 z-40">
         <div className="p-8">
           <Link href="/dashboard" className="flex items-center gap-3 group">
@@ -135,7 +134,7 @@ export function Navbar({ user }: { user: any }) {
       </aside>
 
       {/* Mobile Bottom Nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 glass-nav border-t flex justify-around items-center h-20 px-6 z-50 rounded-t-[2.5rem] shadow-[0_-8px_30px_rgb(0,0,0,0.04)]">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 glass-nav border-t flex justify-around items-center h-20 px-2 z-50 rounded-t-[2.5rem] shadow-[0_-8px_30px_rgb(0,0,0,0.04)]">
         {mobileNavigation}
       </nav>
 
