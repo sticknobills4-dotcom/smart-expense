@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useMemo, useEffect, useState } from 'react';
@@ -66,10 +67,25 @@ export function Navbar({ user }: { user: any }) {
   const auth = useAuth();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
   useEffect(() => {
     setMounted(true);
-  }, []);
+    
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY > lastScrollY && currentScrollY > 50) {
+        setIsVisible(false);
+      } else {
+        setIsVisible(true);
+      }
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
 
   const navigation = useMemo(() => navItems.map((item) => (
     <NavItem key={item.href} item={item} isActive={pathname === item.href} />
@@ -153,7 +169,10 @@ export function Navbar({ user }: { user: any }) {
       </aside>
 
       {/* Mobile Top Floating Avatar */}
-      <div className="md:hidden fixed top-4 left-4 z-50">
+      <div className={cn(
+        "md:hidden fixed top-4 left-4 z-50 transition-all duration-300",
+        isVisible ? "translate-y-0 opacity-100" : "-translate-y-20 opacity-0 pointer-events-none"
+      )}>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-11 w-11 p-0 rounded-full border-2 border-white dark:border-slate-800 shadow-lg bg-white/80 dark:bg-black/80 backdrop-blur-md overflow-hidden active:scale-90 transition-transform">

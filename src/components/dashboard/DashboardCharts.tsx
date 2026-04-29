@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useMemo } from "react"
@@ -74,7 +75,7 @@ export function DashboardCharts({ transactions }: { transactions: Transaction[] 
       {/* Category Breakdown Donut */}
       <Card className="border-none shadow-[0_8px_40px_rgba(0,0,0,0.04)] rounded-[2rem] overflow-hidden">
         <CardHeader className="p-6 md:p-8 pb-0">
-          <CardTitle className="text-xl font-black">Spending Mix</CardTitle>
+          <CardTitle className="text-xl font-black text-foreground">Spending Mix</CardTitle>
           <CardDescription>Top expense categories this period</CardDescription>
         </CardHeader>
         <CardContent className="p-6 md:p-8 pt-0 flex flex-col items-center">
@@ -98,7 +99,7 @@ export function DashboardCharts({ transactions }: { transactions: Transaction[] 
                   content={({ active, payload }) => {
                     if (active && payload && payload.length) {
                       return (
-                        <div className="bg-white/90 backdrop-blur-md p-3 rounded-2xl shadow-xl border border-slate-100">
+                        <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-3 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800">
                           <p className="text-xs font-black uppercase text-slate-400 mb-1">{payload[0].name}</p>
                           <p className="text-lg font-black text-primary">${Number(payload[0].value).toLocaleString()}</p>
                         </div>
@@ -114,7 +115,7 @@ export function DashboardCharts({ transactions }: { transactions: Transaction[] 
             {categoryData.map((entry, index) => (
               <div key={entry.name} className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[index % COLORS.length] }} />
-                <span className="text-[10px] font-bold text-slate-500 uppercase truncate">{entry.name}</span>
+                <span className="text-[10px] font-bold text-muted-foreground uppercase truncate">{entry.name}</span>
               </div>
             ))}
           </div>
@@ -124,28 +125,28 @@ export function DashboardCharts({ transactions }: { transactions: Transaction[] 
       {/* Monthly Trends Bar Chart */}
       <Card className="border-none shadow-[0_8px_40px_rgba(0,0,0,0.04)] rounded-[2rem] overflow-hidden">
         <CardHeader className="p-6 md:p-8 pb-0">
-          <CardTitle className="text-xl font-black">Cash Flow</CardTitle>
+          <CardTitle className="text-xl font-black text-foreground">Cash Flow</CardTitle>
           <CardDescription>Monthly Income vs Expenses</CardDescription>
         </CardHeader>
         <CardContent className="p-6 md:p-8 pt-0">
           <div className="h-[250px] w-full mt-8">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={monthlyData}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" className="opacity-10" />
                 <XAxis 
                   dataKey="month" 
                   axisLine={false} 
                   tickLine={false} 
-                  tick={{ fontSize: 10, fontWeight: 700, fill: '#94a3b8' }}
+                  tick={{ fontSize: 10, fontWeight: 700, fill: 'currentColor', opacity: 0.5 }}
                   dy={10}
                 />
                 <YAxis hide />
                 <Tooltip 
-                  cursor={{ fill: '#f8fafc' }}
+                  cursor={{ fill: 'currentColor', opacity: 0.05 }}
                   content={({ active, payload }) => {
                     if (active && payload && payload.length) {
                       return (
-                        <div className="bg-white/90 backdrop-blur-md p-4 rounded-2xl shadow-xl border border-slate-100 space-y-2">
+                        <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-4 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 space-y-2">
                           {payload.map((p, i) => (
                             <div key={i} className="flex flex-col">
                               <span className="text-[9px] font-black uppercase text-slate-400">{p.name}</span>
@@ -168,11 +169,11 @@ export function DashboardCharts({ transactions }: { transactions: Transaction[] 
           <div className="flex justify-center gap-6 mt-4">
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-accent" />
-              <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Income</span>
+              <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Income</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-primary" />
-              <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Expenses</span>
+              <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Expenses</span>
             </div>
           </div>
         </CardContent>

@@ -37,7 +37,7 @@ export default function DashboardPage() {
 
   if (loading || !user) {
     return (
-      <div className="flex min-h-screen bg-slate-50">
+      <div className="flex min-h-screen bg-slate-50 dark:bg-slate-950">
         <div className="w-64 border-r hidden md:block" />
         <div className="flex-1 p-4 md:p-8 space-y-6">
           <Skeleton className="h-10 w-48 rounded-2xl" />
@@ -63,8 +63,8 @@ export default function DashboardPage() {
           
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="space-y-1 ml-14 md:ml-0">
-              <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900">Dashboard</h1>
-              <p className="text-sm md:text-base text-slate-500 font-medium">Monitoring your financial health, {user.displayName?.split(' ')[0] || 'Member'}.</p>
+              <h1 className="text-3xl md:text-4xl font-black tracking-tight text-foreground">Dashboard</h1>
+              <p className="text-sm md:text-base text-muted-foreground font-medium">Monitoring your financial health, {user.displayName?.split(' ')[0] || 'Member'}.</p>
             </div>
             <div className="flex">
               <TransactionDialog accounts={accounts} onSubmit={addTransaction} />
@@ -81,14 +81,14 @@ export default function DashboardPage() {
               <Card className="border-none shadow-[0_8px_40px_rgba(0,0,0,0.04)] rounded-[2rem] overflow-hidden">
                 <CardHeader className="flex flex-row items-center justify-between p-6 md:p-8 pb-4">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-indigo-50 rounded-xl">
+                    <div className="p-2 bg-indigo-50 dark:bg-indigo-950/30 rounded-xl">
                       <ArrowLeftRight className="w-5 h-5 text-primary" />
                     </div>
-                    <CardTitle className="text-xl md:text-2xl">Recent Activity</CardTitle>
+                    <CardTitle className="text-xl md:text-2xl text-foreground">Recent Activity</CardTitle>
                   </div>
                   <button 
                     onClick={() => router.push('/transactions')} 
-                    className="text-xs md:text-sm text-primary font-bold hover:bg-indigo-50 px-3 py-1.5 md:px-4 md:py-2 rounded-xl transition-all"
+                    className="text-xs md:text-sm text-primary font-bold hover:bg-indigo-50 dark:hover:bg-indigo-950/30 px-3 py-1.5 md:px-4 md:py-2 rounded-xl transition-all"
                   >
                     All
                   </button>
@@ -97,21 +97,21 @@ export default function DashboardPage() {
                   <div className="space-y-2">
                     {recentTransactions.length > 0 ? (
                       recentTransactions.map((t) => (
-                        <div key={t.id} className="flex items-center justify-between p-3 md:p-4 rounded-2xl hover:bg-slate-50 transition-all group">
+                        <div key={t.id} className="flex items-center justify-between p-3 md:p-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-all group">
                           <div className="flex items-center gap-3 md:gap-5 min-w-0">
                             <div className={cn(
                               "w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl flex items-center justify-center transition-all group-hover:scale-110 shadow-sm shrink-0",
-                              t.type === 'income' ? "bg-emerald-50 text-emerald-600" : 
-                              t.type === 'expense' ? "bg-red-50 text-red-600" : 
-                              "bg-indigo-50 text-indigo-600"
+                              t.type === 'income' ? "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600" : 
+                              t.type === 'expense' ? "bg-red-50 dark:bg-red-950/30 text-red-600" : 
+                              "bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600"
                             )}>
                               {t.type === 'income' ? <ArrowDownLeft className="w-5 h-5 md:w-6 md:h-6" /> : 
                                t.type === 'expense' ? <ArrowUpRight className="w-5 h-5 md:w-6 md:h-6" /> : 
                                <ArrowLeftRight className="w-5 h-5 md:w-6 md:h-6" />}
                             </div>
                             <div className="min-w-0">
-                              <p className="font-bold text-slate-900 mb-0.5 truncate">{t.category || t.description || 'General'}</p>
-                              <p className="text-[10px] md:text-xs text-slate-400 font-semibold">{format(new Date(t.date), 'MMM dd, yyyy')}</p>
+                              <p className="font-bold text-foreground mb-0.5 truncate">{t.category || t.description || 'General'}</p>
+                              <p className="text-[10px] md:text-xs text-muted-foreground font-semibold">{format(new Date(t.date), 'MMM dd, yyyy')}</p>
                             </div>
                           </div>
                           <p className={cn(
@@ -124,8 +124,8 @@ export default function DashboardPage() {
                       ))
                     ) : (
                       <div className="py-10 md:py-20 text-center space-y-3">
-                        <LayoutGrid className="w-10 h-10 md:w-12 md:h-12 text-slate-200 mx-auto" />
-                        <p className="text-slate-400 font-medium italic">No transactions captured yet.</p>
+                        <LayoutGrid className="w-10 h-10 md:w-12 md:h-12 text-slate-200 dark:text-slate-800 mx-auto" />
+                        <p className="text-muted-foreground font-medium italic">No transactions captured yet.</p>
                       </div>
                     )}
                   </div>
@@ -136,32 +136,32 @@ export default function DashboardPage() {
             <div className="lg:col-span-4 space-y-6 md:space-y-8">
               <Card className="border-none shadow-[0_8px_40px_rgba(0,0,0,0.04)] rounded-[2rem]">
                 <CardHeader className="flex flex-row items-center justify-between p-6 md:p-8 pb-4">
-                  <CardTitle className="text-lg md:text-xl">My Wallets</CardTitle>
+                  <CardTitle className="text-lg md:text-xl text-foreground">My Wallets</CardTitle>
                   <button 
                     onClick={() => setIsAccountDialogOpen(true)} 
-                    className="p-2 hover:bg-indigo-50 rounded-xl transition-all text-primary"
+                    className="p-2 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 rounded-xl transition-all text-primary"
                   >
                     <Plus className="w-5 h-5 md:w-6 md:h-6" />
                   </button>
                 </CardHeader>
                 <CardContent className="px-6 md:px-8 pb-6 md:pb-8 space-y-4">
                   {accounts.map((acc) => (
-                    <div key={acc.id} className="flex items-center justify-between bg-slate-50 p-4 md:p-5 rounded-2xl md:rounded-3xl border border-slate-100 hover:border-primary/20 transition-all group">
+                    <div key={acc.id} className="flex items-center justify-between bg-slate-50 dark:bg-slate-900/50 p-4 md:p-5 rounded-2xl md:rounded-3xl border border-slate-100 dark:border-slate-800 hover:border-primary/20 transition-all group">
                       <div className="flex items-center gap-3 md:gap-4 min-w-0">
-                        <div className="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-white flex items-center justify-center shadow-sm group-hover:scale-110 transition-all shrink-0">
+                        <div className="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center shadow-sm group-hover:scale-110 transition-all shrink-0">
                           <CreditCard className="w-4 h-4 md:w-5 md:h-5 text-primary" />
                         </div>
                         <div className="min-w-0">
-                          <p className="text-xs md:text-sm font-black text-slate-800 leading-tight truncate">{acc.name}</p>
-                          <p className="text-[9px] md:text-[10px] text-slate-400 font-bold uppercase tracking-wider">{acc.type}</p>
+                          <p className="text-xs md:text-sm font-black text-foreground leading-tight truncate">{acc.name}</p>
+                          <p className="text-[9px] md:text-[10px] text-muted-foreground font-bold uppercase tracking-wider">{acc.type}</p>
                         </div>
                       </div>
-                      <p className="font-black text-sm md:text-base text-slate-900 shrink-0 ml-2">${acc.balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+                      <p className="font-black text-sm md:text-base text-foreground shrink-0 ml-2">${acc.balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
                     </div>
                   ))}
                   {accounts.length === 0 && (
                     <div className="text-center py-4">
-                      <p className="text-[10px] md:text-xs text-slate-400 font-medium italic">Ready to link your first account?</p>
+                      <p className="text-[10px] md:text-xs text-muted-foreground font-medium italic">Ready to link your first account?</p>
                     </div>
                   )}
                 </CardContent>
