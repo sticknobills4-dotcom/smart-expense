@@ -4,52 +4,48 @@
 
 @layer base {
   :root {
-    --background: 204 20% 96%; /* #F0F3F5 */
-    --foreground: 204 40% 10%;
+    --background: 210 20% 98%; /* Light grey/blue macOS background */
+    --foreground: 220 15% 15%;
     --card: 0 0% 100%;
-    --card-foreground: 204 40% 10%;
+    --card-foreground: 220 15% 15%;
     --popover: 0 0% 100%;
-    --popover-foreground: 204 40% 10%;
-    --primary: 205 67% 49%; /* #2989D1 */
+    --popover-foreground: 220 15% 15%;
+    --primary: 212 100% 48%; /* macOS blue */
     --primary-foreground: 0 0% 100%;
-    --secondary: 204 20% 90%;
-    --secondary-foreground: 204 40% 10%;
-    --muted: 204 10% 90%;
-    --muted-foreground: 204 15% 40%;
-    --accent: 165 71% 52%; /* #2EDEB3 */
-    --accent-foreground: 204 40% 10%;
+    --secondary: 210 20% 95%;
+    --secondary-foreground: 220 15% 15%;
+    --muted: 210 10% 90%;
+    --muted-foreground: 220 10% 45%;
+    --accent: 158 100% 40%; /* Minty aqua */
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 204 10% 85%;
-    --input: 204 10% 85%;
-    --ring: 205 67% 49%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 210 15% 90%;
+    --input: 210 15% 90%;
+    --ring: 212 100% 48%;
     --radius: 0.75rem;
-    --chart-1: 205 67% 49%;
-    --chart-2: 165 71% 52%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
   }
+
   .dark {
-    --background: 204 40% 5%;
-    --foreground: 204 20% 98%;
-    --card: 204 40% 8%;
-    --card-foreground: 204 20% 98%;
-    --popover: 204 40% 8%;
-    --popover-foreground: 204 20% 98%;
-    --primary: 205 67% 49%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 204 20% 15%;
-    --secondary-foreground: 204 20% 98%;
-    --muted: 204 20% 15%;
-    --muted-foreground: 204 15% 65%;
-    --accent: 165 71% 52%;
-    --accent-foreground: 204 40% 10%;
+    --background: 220 20% 5%;
+    --foreground: 210 20% 98%;
+    --card: 220 20% 8%;
+    --card-foreground: 210 20% 98%;
+    --popover: 220 20% 8%;
+    --popover-foreground: 210 20% 98%;
+    --primary: 212 100% 55%;
+    --primary-foreground: 220 20% 5%;
+    --secondary: 220 20% 15%;
+    --secondary-foreground: 210 20% 98%;
+    --muted: 220 20% 15%;
+    --muted-foreground: 210 10% 65%;
+    --accent: 158 100% 40%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 62% 30%;
-    --destructive-foreground: 204 20% 98%;
-    --border: 204 20% 15%;
-    --input: 204 20% 15%;
-    --ring: 205 67% 49%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 220 20% 15%;
+    --input: 220 20% 15%;
+    --ring: 212 100% 55%;
   }
 }
 
@@ -58,6 +54,20 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-body;
+    @apply bg-background text-foreground font-body antialiased;
+    background-image: radial-gradient(at 0% 0%, hsla(212, 100%, 48%, 0.05) 0, transparent 50%),
+                      radial-gradient(at 100% 0%, hsla(158, 100%, 40%, 0.05) 0, transparent 50%);
   }
+}
+
+.mac-glass {
+  @apply bg-white/70 backdrop-blur-xl border border-white/20 shadow-xl;
+}
+
+.mac-card {
+  @apply bg-card/80 backdrop-blur-md border border-white/40 shadow-sm transition-all duration-300 hover:shadow-md;
+}
+
+.mac-sidebar {
+  @apply bg-secondary/50 backdrop-blur-2xl border-r border-border/50;
 }

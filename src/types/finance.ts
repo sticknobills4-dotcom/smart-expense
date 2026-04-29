@@ -62,16 +62,13 @@ export interface Reminder {
 
 export const CATEGORIES = {
   expense: [
-    'Food & Dining',
-    'Rent & Utilities',
-    'Transportation',
+    'Food',
+    'Transport',
     'Shopping',
-    'Entertainment',
+    'Bills',
     'Health',
-    'Education',
-    'Travel',
-    'Insurance',
-    'Miscellaneous'
+    'Entertainment',
+    'Custom'
   ],
   income: [
     'Salary',

@@ -9,7 +9,8 @@ import {
   PieChart, 
   BrainCircuit,
   LogOut,
-  Target
+  Target,
+  ChevronRight
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/firebase';
@@ -40,18 +41,21 @@ export function Navbar({ user }: { user: any }) {
 
   return (
     <>
-      {/* Desktop Sidebar */}
-      <aside className="hidden md:flex flex-col w-64 bg-white border-r h-screen fixed left-0 top-0 z-40">
-        <div className="p-6">
-          <Link href="/dashboard" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white shadow-lg shadow-primary/20 transition-transform group-hover:scale-110">
-              <Wallet className="w-6 h-6" />
+      {/* Desktop MacOS Sidebar */}
+      <aside className="hidden md:flex flex-col w-64 mac-sidebar h-screen fixed left-0 top-0 z-40 transition-all duration-500">
+        <div className="p-8">
+          <Link href="/dashboard" className="flex items-center gap-3 group">
+            <div className="w-9 h-9 bg-primary rounded-xl flex items-center justify-center text-white shadow-lg shadow-primary/30 transition-all duration-300 group-hover:scale-105 group-hover:rotate-3">
+              <Wallet className="w-5 h-5" />
             </div>
-            <span className="text-xl font-bold tracking-tight text-primary">SmartExpense</span>
+            <span className="text-xl font-black tracking-tight text-foreground/90">SmartExpense</span>
           </Link>
         </div>
 
-        <nav className="flex-1 px-4 py-4 space-y-1">
+        <nav className="flex-1 px-4 py-2 space-y-1">
+          <div className="px-4 mb-2">
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">Navigation</span>
+          </div>
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
@@ -60,39 +64,42 @@ export function Navbar({ user }: { user: any }) {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group",
+                  "flex items-center justify-between px-4 py-2.5 rounded-xl transition-all duration-200 group relative",
                   isActive 
-                    ? "bg-primary text-white shadow-md shadow-primary/20" 
-                    : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                    ? "bg-primary/10 text-primary" 
+                    : "text-muted-foreground/80 hover:bg-white/40 hover:text-foreground"
                 )}
               >
-                <Icon className={cn("w-5 h-5", !isActive && "group-hover:text-primary")} />
-                <span className="font-medium">{item.label}</span>
+                <div className="flex items-center gap-3">
+                  <Icon className={cn("w-4 h-4 transition-transform duration-300", isActive ? "scale-110" : "group-hover:scale-110")} />
+                  <span className="text-sm font-semibold">{item.label}</span>
+                </div>
+                {isActive && <ChevronRight className="w-3 h-3 opacity-50" />}
               </Link>
             );
           })}
         </nav>
 
-        <div className="p-4 border-t">
+        <div className="p-4 border-t border-border/30 bg-white/10">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="w-full justify-start gap-3 px-2 py-6">
-                <Avatar className="h-10 w-10 border-2 border-primary/10">
+              <Button variant="ghost" className="w-full justify-start gap-3 px-3 py-7 hover:bg-white/30 rounded-2xl transition-all">
+                <Avatar className="h-9 w-9 border border-white/50 shadow-sm">
                   <AvatarImage src={user?.photoURL || ''} />
-                  <AvatarFallback className="bg-primary/5 text-primary font-bold">
+                  <AvatarFallback className="bg-primary/10 text-primary font-bold">
                     {user?.displayName?.charAt(0) || user?.email?.charAt(0) || 'U'}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col items-start overflow-hidden text-left">
-                  <span className="text-sm font-semibold truncate w-full">{user?.displayName || 'User'}</span>
-                  <span className="text-xs text-muted-foreground truncate w-full">{user?.email}</span>
+                  <span className="text-xs font-bold truncate w-full opacity-90">{user?.displayName || 'User'}</span>
+                  <span className="text-[10px] text-muted-foreground truncate w-full font-medium">{user?.email}</span>
                 </div>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuContent align="end" className="w-56 mac-glass rounded-2xl">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => signOut(auth)} className="text-destructive focus:text-destructive">
+              <DropdownMenuItem onClick={() => signOut(auth)} className="text-destructive focus:text-destructive focus:bg-destructive/10 rounded-lg m-1">
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Log out</span>
               </DropdownMenuItem>
@@ -102,7 +109,7 @@ export function Navbar({ user }: { user: any }) {
       </aside>
 
       {/* Mobile Bottom Nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around items-center h-16 px-4 z-50">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 mac-glass border-t flex justify-around items-center h-16 px-6 z-50 rounded-t-[2rem]">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href;
@@ -111,26 +118,28 @@ export function Navbar({ user }: { user: any }) {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex flex-col items-center gap-1 transition-colors",
-                isActive ? "text-primary" : "text-muted-foreground"
+                "flex flex-col items-center gap-1 transition-all duration-300",
+                isActive ? "text-primary scale-110" : "text-muted-foreground opacity-70"
               )}
             >
-              <Icon className="w-6 h-6" />
-              <span className="text-[10px] font-medium">{item.label}</span>
+              <Icon className="w-5 h-5" />
+              <span className="text-[9px] font-bold tracking-tight">{item.label}</span>
             </Link>
           );
         })}
       </nav>
 
       {/* Header for mobile */}
-      <header className="md:hidden sticky top-0 bg-white border-b h-14 flex items-center justify-between px-4 z-40">
+      <header className="md:hidden sticky top-0 bg-background/80 backdrop-blur-xl border-b h-16 flex items-center justify-between px-6 z-40">
         <Link href="/dashboard" className="flex items-center gap-2">
-          <Wallet className="w-6 h-6 text-primary" />
-          <span className="font-bold text-lg">SmartExpense</span>
+          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white shadow-md">
+            <Wallet className="w-4 h-4" />
+          </div>
+          <span className="font-black text-lg tracking-tighter">SmartExpense</span>
         </Link>
-        <Avatar className="h-8 w-8">
+        <Avatar className="h-8 w-8 ring-2 ring-primary/10">
           <AvatarImage src={user?.photoURL || ''} />
-          <AvatarFallback>{user?.email?.charAt(0)}</AvatarFallback>
+          <AvatarFallback className="text-[10px] font-bold">{user?.email?.charAt(0)}</AvatarFallback>
         </Avatar>
       </header>
     </>
