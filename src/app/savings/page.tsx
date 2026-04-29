@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useFinance } from "@/hooks/use-finance";
@@ -42,9 +41,9 @@ export default function SavingsGoalsPage() {
       <Navbar user={user} />
       
       <main className="flex-1 md:ml-64 pb-20 md:pb-8">
-        <div className="max-w-5xl mx-auto p-4 md:p-8 space-y-8">
+        <div className="max-w-5xl auto p-4 md:p-8 space-y-8">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <h1 className="text-3xl font-bold tracking-tight ml-14 md:ml-0">Savings Goals</h1>
+            <h1 className="text-3xl font-bold tracking-tight text-foreground ml-14 md:ml-0">Savings Goals</h1>
             <Button onClick={handleAddNew} className="gap-2 w-full sm:w-auto">
               <Plus className="w-5 h-5" />
               New Goal
@@ -84,11 +83,11 @@ export default function SavingsGoalsPage() {
                     <div className="flex justify-between items-end">
                       <div>
                         <p className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-widest">Saved</p>
-                        <p className="text-xl md:text-2xl font-black text-primary">${goal.currentAmount.toLocaleString()}</p>
+                        <p className="text-xl md:text-2xl font-black text-primary">₹{goal.currentAmount.toLocaleString()}</p>
                       </div>
                       <div className="text-right">
                         <p className="text-[10px] md:text-xs font-medium text-muted-foreground uppercase tracking-widest">Target</p>
-                        <p className="text-base md:text-lg font-bold">${goal.targetAmount.toLocaleString()}</p>
+                        <p className="text-base md:text-lg font-bold">₹{goal.targetAmount.toLocaleString()}</p>
                       </div>
                     </div>
 
@@ -105,7 +104,7 @@ export default function SavingsGoalsPage() {
                         variant="secondary" 
                         className="flex-1 font-bold h-10"
                         onClick={() => {
-                          const amount = Number(prompt("Add amount to savings:"));
+                          const amount = Number(prompt("Add amount to savings (₹):"));
                           if (amount) updateSavingsGoal(goal.id, { currentAmount: goal.currentAmount + amount });
                         }}
                       >
@@ -119,7 +118,7 @@ export default function SavingsGoalsPage() {
             })}
 
             {savingsGoals.length === 0 && (
-              <div className="col-span-full py-16 md:py-20 text-center bg-white rounded-3xl border-2 border-dashed">
+              <div className="col-span-full py-16 md:py-20 text-center bg-white dark:bg-slate-900 rounded-3xl border-2 border-dashed">
                 <TrendingUp className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-20" />
                 <h3 className="text-lg font-bold">Dreaming of something big?</h3>
                 <p className="text-sm text-muted-foreground max-w-xs mx-auto">Set a goal and we'll help you track your progress.</p>

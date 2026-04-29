@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useFinance } from "@/hooks/use-finance";
@@ -77,7 +76,6 @@ export default function TransactionsPage() {
             </div>
           </div>
 
-          {/* Compact Mobile List View (Hidden on Desktop) */}
           <div className="md:hidden space-y-3">
             {filtered.map((t) => (
               <div key={t.id} className="p-4 bg-white dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-white/5 flex items-center justify-between group active:scale-[0.98] transition-all">
@@ -105,7 +103,7 @@ export default function TransactionsPage() {
                     "font-black text-base tracking-tighter",
                     t.type === 'income' ? "text-emerald-500" : t.type === 'expense' ? "text-red-500" : "text-indigo-500"
                   )}>
-                    {t.type === 'expense' ? '-' : t.type === 'income' ? '+' : ''}${t.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                    {t.type === 'expense' ? '-' : t.type === 'income' ? '+' : ''}₹{t.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                   </p>
                   
                   <DropdownMenu>
@@ -134,7 +132,6 @@ export default function TransactionsPage() {
             )}
           </div>
 
-          {/* Detailed Table View (Hidden on Mobile) */}
           <div className="hidden md:block bg-white dark:bg-card/40 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.03)] border border-slate-100 dark:border-white/5 overflow-hidden mac-card">
             <table className="w-full text-left border-collapse">
               <thead>
@@ -178,7 +175,7 @@ export default function TransactionsPage() {
                       "p-6 text-right font-black text-xl tracking-tighter",
                       t.type === 'income' ? "text-emerald-500" : t.type === 'expense' ? "text-red-500" : "text-indigo-500"
                     )}>
-                      {t.type === 'expense' ? '-' : t.type === 'income' ? '+' : ''}${t.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                      {t.type === 'expense' ? '-' : t.type === 'income' ? '+' : ''}₹{t.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                     </td>
                     <td className="p-6 text-center">
                       <div className="flex justify-center items-center gap-2">

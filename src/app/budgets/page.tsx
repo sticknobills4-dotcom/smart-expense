@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useFinance } from "@/hooks/use-finance";
@@ -51,7 +50,7 @@ export default function BudgetsPage() {
       <main className="flex-1 md:ml-64 pb-20 md:pb-8">
         <div className="max-w-4xl mx-auto p-4 md:p-10 space-y-8 md:space-y-10">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 ml-14 md:ml-0">Budget Planner</h1>
+            <h1 className="text-3xl md:text-4xl font-black tracking-tight text-foreground ml-14 md:ml-0">Budget Planner</h1>
             <div className="bg-primary/10 text-primary px-4 py-2 rounded-2xl text-xs md:text-sm font-black uppercase tracking-widest border border-primary/20 w-fit">
               {format(new Date(), 'MMMM yyyy')}
             </div>
@@ -65,7 +64,7 @@ export default function BudgetsPage() {
                 </div>
                 <div>
                   <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest opacity-80">Total Budget</p>
-                  <h3 className="text-2xl md:text-4xl font-black">${totalBudget.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
+                  <h3 className="text-2xl md:text-4xl font-black">₹{totalBudget.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
                 </div>
               </CardContent>
             </Card>
@@ -76,7 +75,7 @@ export default function BudgetsPage() {
                 </div>
                 <div>
                   <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest opacity-80">Available</p>
-                  <h3 className="text-2xl md:text-4xl font-black">${Math.max(0, totalBudget - totalSpent).toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
+                  <h3 className="text-2xl md:text-4xl font-black">₹{Math.max(0, totalBudget - totalSpent).toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
                 </div>
               </CardContent>
             </Card>
@@ -92,12 +91,12 @@ export default function BudgetsPage() {
                   <div key={stat.category} className="space-y-4">
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
                       <div className="space-y-1">
-                        <h4 className="font-black text-slate-800 text-lg">{stat.category}</h4>
+                        <h4 className="font-black text-foreground text-lg">{stat.category}</h4>
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-black text-primary">${stat.spent.toFixed(2)}</span>
-                          <span className="text-xs text-slate-400 font-bold">/</span>
-                          <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">
-                            {stat.limit > 0 ? `$${stat.limit.toFixed(2)}` : 'No Limit'}
+                          <span className="text-sm font-black text-primary">₹{stat.spent.toFixed(2)}</span>
+                          <span className="text-xs text-muted-foreground font-bold">/</span>
+                          <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">
+                            {stat.limit > 0 ? `₹${stat.limit.toFixed(2)}` : 'No Limit'}
                           </span>
                         </div>
                       </div>
@@ -106,7 +105,7 @@ export default function BudgetsPage() {
                         <div className="flex gap-2 animate-in fade-in slide-in-from-right-2 duration-300 w-full sm:w-auto">
                           <Input 
                             type="number" 
-                            className="flex-1 sm:w-28 h-10 rounded-xl bg-slate-100 border-none font-bold" 
+                            className="flex-1 sm:w-28 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 border-none font-bold" 
                             value={tempAmount} 
                             onChange={(e) => setTempAmount(e.target.value)}
                             autoFocus
@@ -129,7 +128,7 @@ export default function BudgetsPage() {
                         </button>
                       )}
                     </div>
-                    <div className="relative h-3 w-full bg-slate-100 rounded-full overflow-hidden">
+                    <div className="relative h-3 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                       <div 
                         className={cn(
                           "h-full transition-all duration-1000 ease-out rounded-full",
