@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useFinance } from "@/hooks/use-finance";
@@ -64,7 +63,7 @@ export default function BudgetsPage() {
               </div>
               <div>
                 <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-white/80">Total Budget</p>
-                <h3 className="text-2xl md:text-4xl font-black">₹{totalBudget.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
+                <h3 className="text-2xl md:text-4xl font-black text-white">₹{totalBudget.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
               </div>
             </div>
             <div className="bg-accent p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] shadow-xl shadow-accent/20 flex items-center gap-4 md:gap-6 text-white">
@@ -73,7 +72,7 @@ export default function BudgetsPage() {
               </div>
               <div>
                 <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-white/80">Available</p>
-                <h3 className="text-2xl md:text-4xl font-black">₹{Math.max(0, totalBudget - totalSpent).toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
+                <h3 className="text-2xl md:text-4xl font-black text-white">₹{Math.max(0, totalBudget - totalSpent).toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
               </div>
             </div>
           </div>

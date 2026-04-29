@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState } from "react";
@@ -74,31 +73,31 @@ export default function LoginPage() {
       </div>
 
       <Card className="w-full max-w-sm border-none shadow-2xl overflow-hidden rounded-[2.5rem]">
-        <CardHeader className="text-center pt-8 pb-4">
-          <CardTitle className="text-2xl font-black tracking-tight text-foreground">
+        <CardHeader className="text-center pt-8 pb-2">
+          <CardTitle className="text-xl font-black tracking-tight text-foreground">
             {isRegistering ? "Join Us" : "Welcome Back"}
           </CardTitle>
-          <CardDescription className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+          <CardDescription className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
             {isRegistering ? "Start tracking growth" : "Manage your money"}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4 px-8 pb-6">
-          <form onSubmit={handleSubmit} className="space-y-3">
+          <form onSubmit={handleSubmit} className="space-y-2.5">
             {isRegistering && (
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input name="name" placeholder="Full Name" className="pl-9 h-11 bg-secondary/50 border-none rounded-xl" required />
+                <Input name="name" placeholder="Full Name" className="pl-9 h-10 bg-secondary/50 border-none rounded-xl text-sm" required />
               </div>
             )}
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input name="email" type="email" placeholder="Email Address" className="pl-9 h-11 bg-secondary/50 border-none rounded-xl" required />
+              <Input name="email" type="email" placeholder="Email Address" className="pl-9 h-10 bg-secondary/50 border-none rounded-xl text-sm" required />
             </div>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input name="password" type="password" placeholder="Password" className="pl-9 h-11 bg-secondary/50 border-none rounded-xl" required />
+              <Input name="password" type="password" placeholder="Password" className="pl-9 h-10 bg-secondary/50 border-none rounded-xl text-sm" required />
             </div>
-            <Button type="submit" className="w-full h-11 rounded-xl text-sm font-bold shadow-lg shadow-primary/20" disabled={loading}>
+            <Button type="submit" className="w-full h-10 rounded-xl text-sm font-bold shadow-lg shadow-primary/20" disabled={loading}>
               {loading ? "Please wait..." : (isRegistering ? "Create Account" : "Sign In")}
             </Button>
           </form>
@@ -110,7 +109,7 @@ export default function LoginPage() {
 
           <Button 
             variant="outline" 
-            className="w-full h-11 border-2 rounded-xl font-bold flex gap-2 hover:bg-secondary/30 transition-colors"
+            className="w-full h-10 border-2 rounded-xl font-bold flex gap-2 hover:bg-secondary/30 transition-colors text-sm"
             onClick={handleGoogleSignIn}
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24">
@@ -123,11 +122,11 @@ export default function LoginPage() {
           </Button>
         </CardContent>
         <CardFooter className="justify-center pb-8 pt-0">
-          <p className="text-xs text-muted-foreground font-medium">
+          <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide">
             {isRegistering ? "Already have an account?" : "New here?"}{" "}
             <button 
               onClick={() => setIsRegistering(!isRegistering)}
-              className="text-primary font-bold hover:underline"
+              className="text-primary font-black hover:underline"
             >
               {isRegistering ? "Sign In" : "Sign Up"}
             </button>
