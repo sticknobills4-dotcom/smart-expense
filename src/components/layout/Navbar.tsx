@@ -32,6 +32,15 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useTheme } from '@/components/theme-provider';
 
 const navItems = [
+  { label: 'Dash', icon: LayoutDashboard, href: '/dashboard' },
+  { label: 'Trans', icon: ArrowUpRight, href: '/transactions' },
+  { label: 'Wallet', icon: Wallet, href: '/accounts' },
+  { label: 'Budget', icon: PieChart, href: '/budgets' },
+  { label: 'Saving', icon: Target, href: '/savings' },
+  { label: 'AI', icon: BrainCircuit, href: '/insights' },
+];
+
+const desktopNavItems = [
   { label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard' },
   { label: 'Transactions', icon: ArrowUpRight, href: '/transactions' },
   { label: 'Accounts', icon: Wallet, href: '/accounts' },
@@ -40,7 +49,7 @@ const navItems = [
   { label: 'Insights', icon: BrainCircuit, href: '/insights' },
 ];
 
-const NavItem = React.memo(({ item, isActive }: { item: typeof navItems[0], isActive: boolean }) => {
+const NavItem = React.memo(({ item, isActive }: { item: typeof desktopNavItems[0], isActive: boolean }) => {
   const Icon = item.icon;
   return (
     <Link
@@ -87,7 +96,7 @@ export function Navbar({ user }: { user: any }) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [lastScrollY]);
 
-  const navigation = useMemo(() => navItems.map((item) => (
+  const navigation = useMemo(() => desktopNavItems.map((item) => (
     <NavItem key={item.href} item={item} isActive={pathname === item.href} />
   )), [pathname]);
 
@@ -99,12 +108,12 @@ export function Navbar({ user }: { user: any }) {
         key={item.href}
         href={item.href}
         className={cn(
-          "flex flex-col items-center gap-1.5 transition-all duration-300 px-1 py-1 flex-1",
+          "flex flex-col items-center gap-1 transition-all duration-300 px-0.5 py-1 flex-1",
           isActive ? "text-primary scale-105" : "text-slate-400 dark:text-slate-500"
         )}
       >
         <Icon className={cn("w-5 h-5", isActive && "stroke-[2.5px]")} />
-        <span className="text-[9px] font-bold tracking-tight text-center">{item.label}</span>
+        <span className="text-[8px] font-black tracking-tight text-center uppercase">{item.label}</span>
       </Link>
     );
   }), [pathname]);
@@ -209,7 +218,7 @@ export function Navbar({ user }: { user: any }) {
       </div>
 
       {/* Mobile Bottom Nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 glass-nav border-t flex justify-around items-center h-20 px-2 z-50 rounded-t-[2.5rem] shadow-[0_-8px_30px_rgb(0,0,0,0.04)]">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 glass-nav border-t flex justify-around items-center h-20 px-1 z-50 rounded-t-[2.5rem] shadow-[0_-8px_30px_rgb(0,0,0,0.04)]">
         {mobileNavigation}
       </nav>
     </>
