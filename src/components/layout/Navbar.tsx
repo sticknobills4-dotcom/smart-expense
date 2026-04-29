@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useMemo, useEffect, useState } from 'react';
@@ -82,14 +81,22 @@ export function Navbar({ user }: { user: any }) {
   useEffect(() => {
     setMounted(true);
     
+    // Performance: Throttle scroll listener
+    let ticking = false;
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      if (currentScrollY > lastScrollY && currentScrollY > 50) {
-        setIsVisible(false);
-      } else {
-        setIsVisible(true);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const currentScrollY = window.scrollY;
+          if (currentScrollY > lastScrollY && currentScrollY > 50) {
+            setIsVisible(false);
+          } else {
+            setIsVisible(true);
+          }
+          setLastScrollY(currentScrollY);
+          ticking = false;
+        });
+        ticking = true;
       }
-      setLastScrollY(currentScrollY);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -107,6 +114,7 @@ export function Navbar({ user }: { user: any }) {
       <Link
         key={item.href}
         href={item.href}
+        prefetch={true}
         className={cn(
           "flex flex-col items-center gap-1 transition-all duration-300 px-0.5 py-1 flex-1",
           isActive ? "text-primary scale-105" : "text-slate-400 dark:text-slate-500"
@@ -217,8 +225,8 @@ export function Navbar({ user }: { user: any }) {
         </DropdownMenu>
       </div>
 
-      {/* Mobile Bottom Nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 glass-nav border-t flex justify-around items-center h-20 px-1 z-50 rounded-t-[2.5rem] shadow-[0_-8px_30px_rgb(0,0,0,0.04)]">
+      {/* Mobile Bottom Nav - Optimized for 6 items */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 glass-nav border-t flex justify-around items-center h-16 px-1 z-50 rounded-t-[2.5rem] shadow-[0_-8px_30px_rgb(0,0,0,0.04)]">
         {mobileNavigation}
       </nav>
     </>
