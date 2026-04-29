@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
+    unoptimized: true, // Required for certain deployments and fixes some loading lags
     remotePatterns: [
       {
         protocol: 'https',
