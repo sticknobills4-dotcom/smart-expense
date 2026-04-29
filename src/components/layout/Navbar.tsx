@@ -1,7 +1,6 @@
-
 "use client"
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
@@ -12,7 +11,9 @@ import {
   BrainCircuit,
   LogOut,
   Target,
-  ChevronRight
+  ChevronRight,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/firebase';
@@ -27,6 +28,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useTheme } from '@/components/theme-provider';
 
 const navItems = [
   { label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard' },
@@ -46,7 +48,7 @@ const NavItem = React.memo(({ item, isActive }: { item: typeof navItems[0], isAc
         "flex items-center justify-between px-4 py-3 rounded-2xl transition-all duration-200 group relative",
         isActive 
           ? "bg-primary text-white shadow-md shadow-primary/20" 
-          : "text-slate-500 hover:bg-slate-200/50 hover:text-slate-900"
+          : "text-slate-500 hover:bg-slate-200/50 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"
       )}
     >
       <div className="flex items-center gap-3">
@@ -62,6 +64,12 @@ NavItem.displayName = 'NavItem';
 export function Navbar({ user }: { user: any }) {
   const pathname = usePathname();
   const auth = useAuth();
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const navigation = useMemo(() => navItems.map((item) => (
     <NavItem key={item.href} item={item} isActive={pathname === item.href} />
@@ -76,7 +84,7 @@ export function Navbar({ user }: { user: any }) {
         href={item.href}
         className={cn(
           "flex flex-col items-center gap-1.5 transition-all duration-300 px-1 py-1 flex-1",
-          isActive ? "text-primary scale-105" : "text-slate-400"
+          isActive ? "text-primary scale-105" : "text-slate-400 dark:text-slate-500"
         )}
       >
         <Icon className={cn("w-5 h-5", isActive && "stroke-[2.5px]")} />
@@ -84,6 +92,8 @@ export function Navbar({ user }: { user: any }) {
       </Link>
     );
   }), [pathname]);
+
+  if (!mounted) return null;
 
   return (
     <>
@@ -94,30 +104,39 @@ export function Navbar({ user }: { user: any }) {
             <div className="w-10 h-10 bg-primary rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary/20 transition-all duration-300 group-hover:scale-110">
               <Wallet className="w-5 h-5" />
             </div>
-            <span className="text-xl font-black tracking-tight text-slate-800">SmartExpense</span>
+            <span className="text-xl font-black tracking-tight text-slate-800 dark:text-white">SmartExpense</span>
           </Link>
         </div>
 
         <nav className="flex-1 px-4 py-2 space-y-1">
           <div className="px-4 mb-4">
-            <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400">Main Menu</span>
+            <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-600">Main Menu</span>
           </div>
           {navigation}
         </nav>
 
-        <div className="p-6 border-t border-slate-200/50">
+        <div className="p-6 border-t border-slate-200/50 dark:border-white/5 space-y-4">
+          <Button 
+            variant="ghost" 
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            className="w-full justify-start gap-3 px-3 py-2 hover:bg-slate-200/40 dark:hover:bg-white/5 rounded-xl transition-all"
+          >
+            {theme === 'dark' ? <Sun className="w-4.5 h-4.5" /> : <Moon className="w-4.5 h-4.5" />}
+            <span className="text-sm font-semibold">{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+          </Button>
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="w-full justify-start gap-3 px-3 py-8 hover:bg-slate-200/40 rounded-3xl transition-all border border-transparent hover:border-slate-200">
-                <Avatar className="h-10 w-10 border-2 border-white shadow-sm">
+              <Button variant="ghost" className="w-full justify-start gap-3 px-3 py-8 hover:bg-slate-200/40 dark:hover:bg-white/5 rounded-3xl transition-all border border-transparent hover:border-slate-200 dark:hover:border-white/10">
+                <Avatar className="h-10 w-10 border-2 border-white dark:border-slate-800 shadow-sm">
                   <AvatarImage src={user?.photoURL || ''} />
                   <AvatarFallback className="bg-primary/10 text-primary font-bold">
                     {user?.displayName?.charAt(0) || user?.email?.charAt(0) || 'U'}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col items-start overflow-hidden text-left">
-                  <span className="text-xs font-bold truncate w-full text-slate-800">{user?.displayName || 'User'}</span>
-                  <span className="text-[10px] text-slate-500 truncate w-full font-medium">{user?.email}</span>
+                  <span className="text-xs font-bold truncate w-full text-slate-800 dark:text-white">{user?.displayName || 'User'}</span>
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 truncate w-full font-medium">{user?.email}</span>
                 </div>
               </Button>
             </DropdownMenuTrigger>
@@ -137,7 +156,7 @@ export function Navbar({ user }: { user: any }) {
       <div className="md:hidden fixed top-4 left-4 z-50">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-11 w-11 p-0 rounded-full border-2 border-white shadow-lg bg-white/80 backdrop-blur-md overflow-hidden active:scale-90 transition-transform">
+            <Button variant="ghost" className="h-11 w-11 p-0 rounded-full border-2 border-white dark:border-slate-800 shadow-lg bg-white/80 dark:bg-black/80 backdrop-blur-md overflow-hidden active:scale-90 transition-transform">
               <Avatar className="h-full w-full">
                 <AvatarImage src={user?.photoURL || ''} />
                 <AvatarFallback className="bg-primary/10 text-primary font-black text-sm">
@@ -146,12 +165,19 @@ export function Navbar({ user }: { user: any }) {
               </Avatar>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-72 mac-glass rounded-[2.5rem] p-5 mt-2 ml-2 shadow-2xl border-white/40">
+          <DropdownMenuContent align="start" className="w-72 mac-glass rounded-[2.5rem] p-5 mt-2 ml-2 shadow-2xl border-white/40 dark:border-white/10">
             <div className="space-y-1 mb-5 px-1">
-              <p className="text-base font-black text-slate-800 tracking-tight">{user?.displayName || 'Smart User'}</p>
-              <p className="text-[11px] text-slate-400 font-bold truncate tracking-wide">{user?.email}</p>
+              <p className="text-base font-black text-slate-800 dark:text-white tracking-tight">{user?.displayName || 'Smart User'}</p>
+              <p className="text-[11px] text-slate-400 dark:text-slate-500 font-bold truncate tracking-wide">{user?.email}</p>
             </div>
-            <DropdownMenuSeparator className="bg-slate-100/50 mb-3" />
+            <DropdownMenuSeparator className="bg-slate-100/50 dark:bg-white/5 mb-3" />
+            <DropdownMenuItem 
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className="rounded-2xl px-4 py-3 cursor-pointer"
+            >
+              {theme === 'dark' ? <Sun className="mr-3 h-5 w-5" /> : <Moon className="mr-3 h-5 w-5" />}
+              <span className="font-black text-sm">{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+            </DropdownMenuItem>
             <DropdownMenuItem 
               onClick={() => signOut(auth)} 
               className="text-destructive focus:text-destructive focus:bg-destructive/5 rounded-2xl px-4 py-3 cursor-pointer"

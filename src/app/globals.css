@@ -29,15 +29,15 @@
   .dark {
     --background: 224 71% 4%;
     --foreground: 210 20% 98%;
-    --card: 224 71% 4%;
+    --card: 224 71% 6%;
     --card-foreground: 210 20% 98%;
     --popover: 224 71% 4%;
     --popover-foreground: 210 20% 98%;
     --primary: 226 70% 65%;
     --primary-foreground: 224 71% 4%;
-    --secondary: 215 28% 17%;
+    --secondary: 215 28% 12%;
     --secondary-foreground: 210 20% 98%;
-    --muted: 215 28% 17%;
+    --muted: 215 28% 12%;
     --muted-foreground: 215 20% 65%;
     --accent: 158 64% 52%;
     --accent-foreground: 0 0% 100%;
@@ -55,25 +55,25 @@
   }
   body {
     @apply bg-background text-foreground font-body antialiased;
-    background-image: radial-gradient(at 0% 0%, hsla(226, 70%, 55%, 0.03) 0, transparent 50%),
-                      radial-gradient(at 100% 100%, hsla(158, 64%, 52%, 0.03) 0, transparent 50%);
+    background-image: radial-gradient(at 0% 0%, hsla(226, 70%, 55%, 0.05) 0, transparent 50%),
+                      radial-gradient(at 100% 100%, hsla(158, 64%, 52%, 0.05) 0, transparent 50%);
   }
 }
 
 .mac-glass {
-  @apply bg-white/70 backdrop-blur-2xl border border-white/40 shadow-xl;
+  @apply bg-white/70 dark:bg-black/40 backdrop-blur-2xl border border-white/40 dark:border-white/10 shadow-xl;
 }
 
 .mac-card {
-  @apply bg-card/80 backdrop-blur-md border border-white/50 shadow-sm transition-all duration-300 hover:shadow-lg hover:shadow-primary/5;
+  @apply bg-card/80 dark:bg-card/40 backdrop-blur-md border border-white/50 dark:border-white/10 shadow-sm transition-all duration-300 hover:shadow-lg hover:shadow-primary/5;
 }
 
 .mac-sidebar {
-  @apply bg-slate-100/40 backdrop-blur-3xl border-r border-slate-200/50;
+  @apply bg-slate-100/40 dark:bg-slate-900/40 backdrop-blur-3xl border-r border-slate-200/50 dark:border-white/5;
 }
 
 .glass-nav {
-  @apply bg-white/80 backdrop-blur-xl border-b border-slate-200/50;
+  @apply bg-white/80 dark:bg-black/80 backdrop-blur-xl border-b border-slate-200/50 dark:border-white/10;
 }
 
 /* Custom scrollbar for horizontal tables on mobile */
