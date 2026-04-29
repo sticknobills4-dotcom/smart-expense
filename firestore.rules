@@ -1,0 +1,193 @@
+/**
+ * SmartExpense Firestore Security Rules
+ *
+ * Core Philosophy:
+ * This ruleset enforces a strict user-ownership model where users are isolated within their own data trees.
+ * Security is rooted in the Firebase Authentication UID, which serves as the primary key for the /users collection
+ * and as a partition key for all subcollections.
+ *
+ * Data Structure:
+ * - /users/{userId}: Root profile and preferences.
+ * - /users/{userId}/[subcollections]: User-specific financial data (Accounts, Transactions, Budgets, etc.).
+ * - /categories: Global, read-only system categories accessible to all authenticated users.
+ *
+ * Key Security Decisions:
+ * 1. Authorization Independence: We enforce that the `userId` field within documents matches the path wildcard. 
+ *    This ensures that even if a document is moved or incorrectly referenced, the security check remains atomic.
+ * 2. Structural Segregation: Global categories are separated from user-custom categories to simplify 
+ *    list operations and prevent permission leakage.
+ * 3. Prototyping Flexibility: While ownership is strictly enforced, the rules allow for flexible data 
+ *    shapes to support rapid development of new features like recurring expenses and smart alerts.
+ * 4. Immutable Ownership: Once a financial record is created, its ownership (userId) cannot be changed.
+ *
+ * Denormalization for Authorization:
+ * All user-owned documents MUST include a `userId` field. This allows the rules to perform 
+ * fast, non-lookup authorization checks without calling `get()`.
+ */
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // --- Global Helper Functions ---
+
+    /** Checks if the request is from an authenticated user. */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /** Checks if the authenticated user's UID matches the provided userId wildcard. */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /** 
+     * Checks if the user is the owner and the document already exists.
+     * Used for update and delete operations to ensure state-change robustness.
+     */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+
+    /** 
+     * Validates that the internal 'userId' field in the document matches the owner. 
+     * Used during creation to enforce the relationship.
+     */
+    function validatesInternalOwnership(userId) {
+      return request.resource.data.userId == userId;
+    }
+
+    /**
+     * Ensures that the 'userId' field is not modified during an update.
+     */
+    function isOwnershipImmutable() {
+      return request.resource.data.userId == resource.data.userId;
+    }
+
+    // --- Collection Rules ---
+
+    /**
+     * @description Rules for the root UserProfile document.
+     * @path /users/{userId}
+     * @allow Authenticated user can create/read/update their own profile (create: uid matches docId).
+     * @deny Any user attempting to read or modify a profile that does not match their UID.
+     * @principle Ownership and Self-Creation.
+     */
+    match /users/{userId} {
+      allow get, list: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+
+      /**
+       * @description User-defined custom expense/income categories.
+       * @path /users/{userId}/categories/{categoryId}
+       * @allow User can manage their own custom categories.
+       * @deny Cross-user access or missing userId field in document.
+       * @principle Ownership with Path Consistency.
+       */
+      match /categories/{categoryId} {
+        allow get, list: if isOwner(userId);
+        allow create: if isOwner(userId) && validatesInternalOwnership(userId);
+        allow update: if isExistingOwner(userId) && isOwnershipImmutable();
+        allow delete: if isExistingOwner(userId);
+      }
+
+      /**
+       * @description Financial accounts (Cash, Bank, Savings).
+       * @path /users/{userId}/accounts/{accountId}
+       * @allow Owner can perform all CRUD operations.
+       * @deny Modifications that change the owner or access from other users.
+       * @principle Ownership with Path Consistency.
+       */
+      match /accounts/{accountId} {
+        allow get, list: if isOwner(userId);
+        allow create: if isOwner(userId) && validatesInternalOwnership(userId);
+        allow update: if isExistingOwner(userId) && isOwnershipImmutable();
+        allow delete: if isExistingOwner(userId);
+      }
+
+      /**
+       * @description Individual transaction records.
+       * @path /users/{userId}/transactions/{transactionId}
+       * @allow User can track expenses and income.
+       * @deny Access to transactions belonging to other users.
+       * @principle Ownership with Path Consistency.
+       */
+      match /transactions/{transactionId} {
+        allow get, list: if isOwner(userId);
+        allow create: if isOwner(userId) && validatesInternalOwnership(userId);
+        allow update: if isExistingOwner(userId) && isOwnershipImmutable();
+        allow delete: if isExistingOwner(userId);
+      }
+
+      /**
+       * @description Templates for recurring financial events.
+       * @path /users/{userId}/recurringTransactions/{recurringTransactionId}
+       * @allow Owner can manage recurring templates.
+       * @deny Unauthenticated access or cross-tenant modification.
+       * @principle Ownership with Path Consistency.
+       */
+      match /recurringTransactions/{recurringTransactionId} {
+        allow get, list: if isOwner(userId);
+        allow create: if isOwner(userId) && validatesInternalOwnership(userId);
+        allow update: if isExistingOwner(userId) && isOwnershipImmutable();
+        allow delete: if isExistingOwner(userId);
+      }
+
+      /**
+       * @description Monthly budget definitions per category.
+       * @path /users/{userId}/budgets/{budgetId}
+       * @allow Owner can set and track budgets.
+       * @deny Access to budgets of other users.
+       * @principle Ownership with Path Consistency.
+       */
+      match /budgets/{budgetId} {
+        allow get, list: if isOwner(userId);
+        allow create: if isOwner(userId) && validatesInternalOwnership(userId);
+        allow update: if isExistingOwner(userId) && isOwnershipImmutable();
+        allow delete: if isExistingOwner(userId);
+      }
+
+      /**
+       * @description Financial savings goals.
+       * @path /users/{userId}/savingsGoals/{savingsGoalId}
+       * @allow Owner can manage goals.
+       * @deny Access to goals of other users.
+       * @principle Ownership with Path Consistency.
+       */
+      match /savingsGoals/{savingsGoalId} {
+        allow get, list: if isOwner(userId);
+        allow create: if isOwner(userId) && validatesInternalOwnership(userId);
+        allow update: if isExistingOwner(userId) && isOwnershipImmutable();
+        allow delete: if isExistingOwner(userId);
+      }
+
+      /**
+       * @description Financial alerts and due-date reminders.
+       * @path /users/{userId}/reminders/{reminderId}
+       * @allow Owner can manage their own reminders.
+       * @deny Access to reminders of other users.
+       * @principle Ownership with Path Consistency.
+       */
+      match /reminders/{reminderId} {
+        allow get, list: if isOwner(userId);
+        allow create: if isOwner(userId) && validatesInternalOwnership(userId);
+        allow update: if isExistingOwner(userId) && isOwnershipImmutable();
+        allow delete: if isExistingOwner(userId);
+      }
+    }
+
+    /**
+     * @description Predefined global system categories.
+     * @path /categories/{categoryId}
+     * @allow Any signed-in user can read global categories (get/list).
+     * @deny Any user (including authenticated) attempting to create, update, or delete.
+     * @principle Public Read with Owner-Only (Admin-Only) Writes (Write denied for standard users).
+     */
+    match /categories/{categoryId} {
+      allow get, list: if isSignedIn();
+      allow create, update, delete: if false; // System-managed; no client writes allowed.
+    }
+  }
+}

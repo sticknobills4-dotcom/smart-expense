@@ -1,0 +1,663 @@
+{
+  "entities": {
+    "UserProfile": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "UserProfile",
+      "type": "object",
+      "description": "Represents a user's profile and basic preferences within the SmartExpense application. This entity links to all other user-specific financial data.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the UserProfile entity."
+        },
+        "email": {
+          "type": "string",
+          "description": "The user's email address, used for authentication and communication.",
+          "format": "email"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The user's display name or full name."
+        },
+        "currencyPreference": {
+          "type": "string",
+          "description": "The preferred currency for displaying financial values (e.g., 'USD', 'EUR', 'GBP')."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the user profile was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the user profile was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "email",
+        "displayName",
+        "currencyPreference",
+        "createdAt"
+      ]
+    },
+    "Account": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Account",
+      "type": "object",
+      "description": "Represents a financial account owned by a user, such as cash, bank, or savings accounts.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Account entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the UserProfile this account belongs to. (Relationship: UserProfile 1:N Account)"
+        },
+        "name": {
+          "type": "string",
+          "description": "The user-friendly name of the account (e.g., 'Cash', 'My Bank Account', 'Savings Fund')."
+        },
+        "type": {
+          "type": "string",
+          "description": "The type of the account (e.g., 'Cash', 'Bank', 'Credit Card', 'Savings', 'Investment')."
+        },
+        "initialBalance": {
+          "type": "number",
+          "description": "The balance of the account when it was first created or tracked."
+        },
+        "currentBalance": {
+          "type": "number",
+          "description": "The current balance of the account, updated with transactions."
+        },
+        "currency": {
+          "type": "string",
+          "description": "The ISO 4217 currency code for the account (e.g., 'USD', 'EUR')."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the account was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the account was last updated."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "name",
+        "type",
+        "initialBalance",
+        "currentBalance",
+        "currency",
+        "createdAt"
+      ]
+    },
+    "Category": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Category",
+      "type": "object",
+      "description": "Represents a classification for transactions (e.g., 'Food', 'Salary', 'Rent'). Categories can be predefined or user-created.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Category entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the UserProfile if this is a custom category, or null if it's a global predefined category. (Relationship: UserProfile 1:N Category)"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the category (e.g., 'Groceries', 'Utilities', 'Freelance Income')."
+        },
+        "type": {
+          "type": "string",
+          "description": "The type of category, either 'income' or 'expense'."
+        },
+        "icon": {
+          "type": "string",
+          "description": "Optional icon identifier for UI representation of the category."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the category was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the category was last updated."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "type",
+        "createdAt"
+      ]
+    },
+    "Transaction": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Transaction",
+      "type": "object",
+      "description": "Represents a single financial event, either an income or an expense, linked to an account and category.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Transaction entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the UserProfile who owns this transaction. (Relationship: UserProfile 1:N Transaction)"
+        },
+        "accountId": {
+          "type": "string",
+          "description": "Reference to the Account from which the transaction occurred or to which it was added. (Relationship: Account 1:N Transaction)"
+        },
+        "categoryId": {
+          "type": "string",
+          "description": "Reference to the Category for this transaction. (Relationship: Category 1:N Transaction)"
+        },
+        "amount": {
+          "type": "number",
+          "description": "The monetary value of the transaction. Positive for income, negative for expense."
+        },
+        "type": {
+          "type": "string",
+          "description": "Indicates if the transaction is an 'income' or 'expense'."
+        },
+        "description": {
+          "type": "string",
+          "description": "A brief description or note about the transaction."
+        },
+        "date": {
+          "type": "string",
+          "description": "The date and time when the transaction occurred.",
+          "format": "date-time"
+        },
+        "recurringTransactionId": {
+          "type": "string",
+          "description": "Optional reference to a RecurringTransaction if this transaction was generated from a recurring template. (Relationship: RecurringTransaction 1:N Transaction)"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the transaction record was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the transaction record was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "accountId",
+        "categoryId",
+        "amount",
+        "type",
+        "description",
+        "date",
+        "createdAt"
+      ]
+    },
+    "RecurringTransaction": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "RecurringTransaction",
+      "type": "object",
+      "description": "Defines a template for transactions that occur repeatedly, allowing the app to automatically generate actual Transaction records.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the RecurringTransaction entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the UserProfile who owns this recurring transaction. (Relationship: UserProfile 1:N RecurringTransaction)"
+        },
+        "accountId": {
+          "type": "string",
+          "description": "Reference to the Account where the recurring transaction will occur. (Relationship: Account 1:N RecurringTransaction)"
+        },
+        "categoryId": {
+          "type": "string",
+          "description": "Reference to the Category for this recurring transaction. (Relationship: Category 1:N RecurringTransaction)"
+        },
+        "amount": {
+          "type": "number",
+          "description": "The monetary value of the recurring transaction."
+        },
+        "type": {
+          "type": "string",
+          "description": "Indicates if the recurring transaction is an 'income' or 'expense'."
+        },
+        "description": {
+          "type": "string",
+          "description": "A brief description or note about the recurring transaction."
+        },
+        "startDate": {
+          "type": "string",
+          "description": "The date from which the recurring transaction starts generating actual transactions.",
+          "format": "date"
+        },
+        "frequency": {
+          "type": "string",
+          "description": "How often the transaction recurs (e.g., 'daily', 'weekly', 'bi-weekly', 'monthly', 'quarterly', 'yearly')."
+        },
+        "endDate": {
+          "type": "string",
+          "description": "Optional end date for the recurring transaction. If not set, it recurs indefinitely.",
+          "format": "date"
+        },
+        "nextOccurrenceDate": {
+          "type": "string",
+          "description": "The calculated date of the next upcoming occurrence for this recurring transaction.",
+          "format": "date"
+        },
+        "lastGeneratedDate": {
+          "type": "string",
+          "description": "The date when a Transaction was last generated from this recurring template.",
+          "format": "date"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the recurring transaction record was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the recurring transaction record was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "accountId",
+        "categoryId",
+        "amount",
+        "type",
+        "description",
+        "startDate",
+        "frequency",
+        "nextOccurrenceDate",
+        "createdAt"
+      ]
+    },
+    "Budget": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Budget",
+      "type": "object",
+      "description": "Represents a user's spending budget for a specific category within a given month.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Budget entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the UserProfile who set this budget. (Relationship: UserProfile 1:N Budget)"
+        },
+        "categoryId": {
+          "type": "string",
+          "description": "Reference to the Category this budget applies to. (Relationship: Category 1:N Budget)"
+        },
+        "month": {
+          "type": "string",
+          "description": "The month and year this budget applies to (e.g., '2023-10').",
+          "format": "date"
+        },
+        "limitAmount": {
+          "type": "number",
+          "description": "The maximum amount budgeted for this category in the specified month."
+        },
+        "spentAmount": {
+          "type": "number",
+          "description": "The actual amount spent in this category for the specified month, derived from transactions."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the budget was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the budget was last updated."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "categoryId",
+        "month",
+        "limitAmount",
+        "spentAmount",
+        "createdAt"
+      ]
+    },
+    "SavingsGoal": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "SavingsGoal",
+      "type": "object",
+      "description": "Represents a user-defined financial goal to save a specific amount of money by a target date.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the SavingsGoal entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the UserProfile who owns this savings goal. (Relationship: UserProfile 1:N SavingsGoal)"
+        },
+        "name": {
+          "type": "string",
+          "description": "A descriptive name for the savings goal (e.g., 'New Car Fund', 'Vacation to Hawaii')."
+        },
+        "targetAmount": {
+          "type": "number",
+          "description": "The total amount of money the user aims to save for this goal."
+        },
+        "currentAmount": {
+          "type": "number",
+          "description": "The current amount saved towards the goal."
+        },
+        "targetDate": {
+          "type": "string",
+          "description": "The desired date by which the savings goal should be achieved.",
+          "format": "date"
+        },
+        "startDate": {
+          "type": "string",
+          "description": "The date when the savings goal was initiated.",
+          "format": "date"
+        },
+        "accountId": {
+          "type": "string",
+          "description": "Optional reference to an Account where the savings for this goal are held. (Relationship: Account 1:N SavingsGoal)"
+        },
+        "status": {
+          "type": "string",
+          "description": "The current status of the goal (e.g., 'active', 'achieved', 'cancelled')."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the savings goal was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the savings goal was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "name",
+        "targetAmount",
+        "currentAmount",
+        "targetDate",
+        "startDate",
+        "status",
+        "createdAt"
+      ]
+    },
+    "Reminder": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Reminder",
+      "type": "object",
+      "description": "Represents a user-defined reminder for bills, due dates, or general financial alerts.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Reminder entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the UserProfile who created this reminder. (Relationship: UserProfile 1:N Reminder)"
+        },
+        "title": {
+          "type": "string",
+          "description": "A short, descriptive title for the reminder (e.g., 'Rent Due', 'Credit Card Payment')."
+        },
+        "description": {
+          "type": "string",
+          "description": "An optional detailed description of the reminder."
+        },
+        "dueDate": {
+          "type": "string",
+          "description": "The date and time when the reminder is due.",
+          "format": "date-time"
+        },
+        "isRecurring": {
+          "type": "boolean",
+          "description": "Indicates if this is a recurring reminder."
+        },
+        "frequency": {
+          "type": "string",
+          "description": "If 'isRecurring' is true, specifies how often the reminder recurs (e.g., 'daily', 'weekly', 'monthly')."
+        },
+        "nextReminderDate": {
+          "type": "string",
+          "description": "The calculated date and time for the next occurrence of this reminder.",
+          "format": "date-time"
+        },
+        "isCompleted": {
+          "type": "boolean",
+          "description": "Indicates if the reminder has been marked as completed for its current occurrence."
+        },
+        "relatedTransactionId": {
+          "type": "string",
+          "description": "Optional reference to a Transaction that this reminder is associated with (e.g., marking a bill as paid). (Relationship: Transaction 1:N Reminder)"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the reminder was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the reminder was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "title",
+        "dueDate",
+        "isRecurring",
+        "isCompleted",
+        "createdAt"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "UserProfile",
+          "schema": {
+            "$ref": "#/backend/entities/UserProfile"
+          },
+          "description": "Stores individual user profiles. The document ID corresponds to the Firebase Authentication UID. Includes denormalized 'id' field matching the path wildcard for authorization independence.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique ID of the user, corresponding to Firebase Authentication UID."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/categories/{categoryId}",
+        "definition": {
+          "entityName": "Category",
+          "schema": {
+            "$ref": "#/backend/entities/Category"
+          },
+          "description": "Stores predefined, global expense/income categories accessible to all authenticated users. The 'userId' field will be null or omitted for these global categories. Read-only for authenticated users.",
+          "params": [
+            {
+              "name": "categoryId",
+              "description": "The unique ID of the global category."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/categories/{categoryId}",
+        "definition": {
+          "entityName": "Category",
+          "schema": {
+            "$ref": "#/backend/entities/Category"
+          },
+          "description": "Stores user-defined custom expense/income categories. Includes denormalized 'userId' for authorization independence, matching the path wildcard.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique ID of the user who owns this category."
+            },
+            {
+              "name": "categoryId",
+              "description": "The unique ID of the custom category."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/accounts/{accountId}",
+        "definition": {
+          "entityName": "Account",
+          "schema": {
+            "$ref": "#/backend/entities/Account"
+          },
+          "description": "Stores individual financial accounts (e.g., cash, bank, savings) for a user. Includes denormalized 'userId' for authorization independence, matching the path wildcard.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique ID of the user who owns this account."
+            },
+            {
+              "name": "accountId",
+              "description": "The unique ID of the financial account."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/transactions/{transactionId}",
+        "definition": {
+          "entityName": "Transaction",
+          "schema": {
+            "$ref": "#/backend/entities/Transaction"
+          },
+          "description": "Stores all income and expense transactions for a user. Includes denormalized 'userId' for authorization independence, matching the path wildcard. Also includes 'accountId' and 'categoryId' as foreign keys.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique ID of the user who owns this transaction."
+            },
+            {
+              "name": "transactionId",
+              "description": "The unique ID of the transaction."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/recurringTransactions/{recurringTransactionId}",
+        "definition": {
+          "entityName": "RecurringTransaction",
+          "schema": {
+            "$ref": "#/backend/entities/RecurringTransaction"
+          },
+          "description": "Stores templates for recurring financial events for a user. Includes denormalized 'userId' for authorization independence, matching the path wildcard.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique ID of the user who owns this recurring transaction."
+            },
+            {
+              "name": "recurringTransactionId",
+              "description": "The unique ID of the recurring transaction template."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/budgets/{budgetId}",
+        "definition": {
+          "entityName": "Budget",
+          "schema": {
+            "$ref": "#/backend/entities/Budget"
+          },
+          "description": "Stores user-defined monthly budgets per category. Includes denormalized 'userId' for authorization independence, matching the path wildcard.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique ID of the user who set this budget."
+            },
+            {
+              "name": "budgetId",
+              "description": "The unique ID of the budget."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/savingsGoals/{savingsGoalId}",
+        "definition": {
+          "entityName": "SavingsGoal",
+          "schema": {
+            "$ref": "#/backend/entities/SavingsGoal"
+          },
+          "description": "Stores user's financial savings goals. Includes denormalized 'userId' for authorization independence, matching the path wildcard.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique ID of the user who owns this savings goal."
+            },
+            {
+              "name": "savingsGoalId",
+              "description": "The unique ID of the savings goal."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/reminders/{reminderId}",
+        "definition": {
+          "entityName": "Reminder",
+          "schema": {
+            "$ref": "#/backend/entities/Reminder"
+          },
+          "description": "Stores user-defined financial reminders and alerts. Includes denormalized 'userId' for authorization independence, matching the path wildcard.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique ID of the user who created this reminder."
+            },
+            {
+              "name": "reminderId",
+              "description": "The unique ID of the reminder."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The recommended Firestore structure is designed around user-centric data ownership, ensuring robust security, scalability, and debuggability in alignment with the core design principles. All user-specific data is deeply nested under a `/users/{userId}/` path, making authorization explicit and efficient.\n\n**Authorization Independence via Denormalization:**\nEach user-owned document (e.g., Account, Transaction, RecurringTransaction, Budget, SavingsGoal, Reminder, and user-defined Categories) explicitly includes a `userId` field that matches the `{userId}` wildcard in its path. This is a critical denormalization strategy. For example, a document at `/users/{userId}/accounts/{accountId}` will have `resource.data.userId == userId`. This design eliminates the need for `get()` calls in Firestore security rules to check parent document ownership. Rules can simply verify `request.auth.uid == userId` (from the path) and `request.auth.uid == resource.data.userId` (from the document itself). This makes authorization checks atomic, independent of other documents, and highly performant, directly addressing the CRITICAL principle of Authorization Independence.\n\n**QAPs (Rules are not Filters) and Structural Segregation:**\nThis structure directly supports Query-as-Permission (QAP) principles by ensuring that the data's location inherently defines its access permissions, allowing secure `list` operations:\n\n1.  **User-Owned Collections:** Collections like `/users/{userId}/accounts`, `/users/{userId}/transactions`, `/users/{userId}/budgets`, etc., naturally segregate data by owner. A query to `/users/{currentUserId}/accounts` will only ever return accounts belonging to `currentUserId`. The security rule `allow list: if request.auth.uid == userId;` ensures that users can only list their own data. This means the client-side query itself does not need to apply filters for `userId`; the structure and rules enforce it. This prevents scenarios where rules might attempt to 'filter out' unauthorized documents from a broader result set (which Firestore rules cannot do), thereby strictly adhering to QAPs.\n\n2.  **Segregated Categories:** The `Category` entity is handled with structural segregation to accommodate both global, predefined categories and user-specific custom categories. Global categories reside in a top-level collection `/categories/{categoryId}`, which will be read-only for all authenticated users. User-defined categories are nested under `/users/{userId}/categories/{categoryId}`, providing read/write access only to the owning user. This separation ensures that a `list` query on `/categories` will only return global items, and a `list` on `/users/{userId}/categories` will only return the user's custom items, without mixing security postures in a single collection. This is a prime example of structural segregation enabling clear, simple, and QAP-compliant `list` rules.\n\nIn summary, the design prioritizes path-based ownership, consistent denormalization of the `userId` in all subcollection documents, and strategic segregation of data with different access requirements. This approach ensures that security rules are simple, auditable, and inherently prevent unauthorized access while supporting efficient client-side querying without relying on server-side filtering by rules."
+  }
+}
