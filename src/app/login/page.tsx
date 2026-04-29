@@ -73,50 +73,44 @@ export default function LoginPage() {
         <span className="text-xl font-bold text-primary tracking-tight">SmartExpense</span>
       </div>
 
-      <Card className="w-full max-w-sm border-none shadow-2xl overflow-hidden rounded-3xl">
-        <CardHeader className="text-center pt-8 pb-4 bg-card">
-          <CardTitle className="text-2xl font-bold tracking-tight text-foreground">
-            {isRegistering ? "Join SmartExpense" : "Welcome Back"}
+      <Card className="w-full max-w-sm border-none shadow-2xl overflow-hidden rounded-[2.5rem]">
+        <CardHeader className="text-center pt-8 pb-4">
+          <CardTitle className="text-2xl font-black tracking-tight text-foreground">
+            {isRegistering ? "Join Us" : "Welcome Back"}
           </CardTitle>
-          <CardDescription className="text-sm">
-            {isRegistering ? "Start tracking your financial growth." : "Log in to manage your money smartly."}
+          <CardDescription className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+            {isRegistering ? "Start tracking growth" : "Manage your money"}
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4 px-6 pt-2 pb-6 bg-card">
+        <CardContent className="space-y-4 px-8 pb-6">
           <form onSubmit={handleSubmit} className="space-y-3">
             {isRegistering && (
-              <div className="space-y-1">
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input name="name" placeholder="Full Name" className="pl-9 h-9 bg-secondary/30 border-none rounded-xl text-foreground" required />
-                </div>
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input name="name" placeholder="Full Name" className="pl-9 h-11 bg-secondary/50 border-none rounded-xl" required />
               </div>
             )}
-            <div className="space-y-1">
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input name="email" type="email" placeholder="Email Address" className="pl-9 h-9 bg-secondary/30 border-none rounded-xl text-foreground" required />
-              </div>
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input name="email" type="email" placeholder="Email Address" className="pl-9 h-11 bg-secondary/50 border-none rounded-xl" required />
             </div>
-            <div className="space-y-1">
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input name="password" type="password" placeholder="Password" className="pl-9 h-9 bg-secondary/30 border-none rounded-xl text-foreground" required />
-              </div>
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input name="password" type="password" placeholder="Password" className="pl-9 h-11 bg-secondary/50 border-none rounded-xl" required />
             </div>
-            <Button type="submit" className="w-full h-10 rounded-xl text-sm font-bold shadow-lg shadow-primary/20" disabled={loading}>
+            <Button type="submit" className="w-full h-11 rounded-xl text-sm font-bold shadow-lg shadow-primary/20" disabled={loading}>
               {loading ? "Please wait..." : (isRegistering ? "Create Account" : "Sign In")}
             </Button>
           </form>
 
           <div className="relative flex items-center justify-center py-1">
-            <span className="absolute bg-card px-3 text-[10px] text-muted-foreground uppercase tracking-widest font-bold">Or</span>
+            <span className="absolute bg-background px-3 text-[10px] text-muted-foreground uppercase tracking-widest font-black">Or</span>
             <div className="w-full h-px bg-secondary"></div>
           </div>
 
           <Button 
             variant="outline" 
-            className="w-full h-10 border-2 rounded-xl font-bold flex gap-2 hover:bg-secondary/30 transition-colors text-foreground"
+            className="w-full h-11 border-2 rounded-xl font-bold flex gap-2 hover:bg-secondary/30 transition-colors"
             onClick={handleGoogleSignIn}
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24">
@@ -128,9 +122,9 @@ export default function LoginPage() {
             Google
           </Button>
         </CardContent>
-        <CardFooter className="justify-center pb-6 pt-0 bg-card">
-          <p className="text-xs text-muted-foreground">
-            {isRegistering ? "Already have an account?" : "New to SmartExpense?"}{" "}
+        <CardFooter className="justify-center pb-8 pt-0">
+          <p className="text-xs text-muted-foreground font-medium">
+            {isRegistering ? "Already have an account?" : "New here?"}{" "}
             <button 
               onClick={() => setIsRegistering(!isRegistering)}
               className="text-primary font-bold hover:underline"
