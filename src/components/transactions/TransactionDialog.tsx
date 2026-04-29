@@ -123,7 +123,7 @@ export function TransactionDialog({
           <div className="space-y-2">
             <Label htmlFor="amount" className="text-xs font-bold text-muted-foreground uppercase tracking-wider ml-1">Amount</Label>
             <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-bold">₹</span>
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-foreground font-bold">₹</span>
               <Input 
                 id="amount" 
                 name="amount" 

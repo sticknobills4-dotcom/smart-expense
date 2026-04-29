@@ -65,7 +65,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F0F3F5] p-4 font-body">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4 font-body">
       <div className="absolute top-6 left-6 flex items-center gap-2">
         <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white shadow-lg">
           <Wallet className="w-5 h-5" />
@@ -74,49 +74,49 @@ export default function LoginPage() {
       </div>
 
       <Card className="w-full max-w-sm border-none shadow-2xl overflow-hidden rounded-3xl">
-        <CardHeader className="text-center pt-8 pb-4 bg-white">
-          <CardTitle className="text-2xl font-bold tracking-tight">
+        <CardHeader className="text-center pt-8 pb-4 bg-card">
+          <CardTitle className="text-2xl font-bold tracking-tight text-foreground">
             {isRegistering ? "Join SmartExpense" : "Welcome Back"}
           </CardTitle>
           <CardDescription className="text-sm">
             {isRegistering ? "Start tracking your financial growth." : "Log in to manage your money smartly."}
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4 px-6 pt-2 pb-6 bg-white">
+        <CardContent className="space-y-4 px-6 pt-2 pb-6 bg-card">
           <form onSubmit={handleSubmit} className="space-y-3">
             {isRegistering && (
               <div className="space-y-1">
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input name="name" placeholder="Full Name" className="pl-9 h-10 bg-secondary/30 border-none rounded-xl" required />
+                  <Input name="name" placeholder="Full Name" className="pl-9 h-9 bg-secondary/30 border-none rounded-xl text-foreground" required />
                 </div>
               </div>
             )}
             <div className="space-y-1">
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input name="email" type="email" placeholder="Email Address" className="pl-9 h-10 bg-secondary/30 border-none rounded-xl" required />
+                <Input name="email" type="email" placeholder="Email Address" className="pl-9 h-9 bg-secondary/30 border-none rounded-xl text-foreground" required />
               </div>
             </div>
             <div className="space-y-1">
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input name="password" type="password" placeholder="Password" className="pl-9 h-10 bg-secondary/30 border-none rounded-xl" required />
+                <Input name="password" type="password" placeholder="Password" className="pl-9 h-9 bg-secondary/30 border-none rounded-xl text-foreground" required />
               </div>
             </div>
-            <Button type="submit" className="w-full h-11 rounded-xl text-base font-bold shadow-lg shadow-primary/20" disabled={loading}>
+            <Button type="submit" className="w-full h-10 rounded-xl text-sm font-bold shadow-lg shadow-primary/20" disabled={loading}>
               {loading ? "Please wait..." : (isRegistering ? "Create Account" : "Sign In")}
             </Button>
           </form>
 
           <div className="relative flex items-center justify-center py-1">
-            <span className="absolute bg-white px-3 text-[10px] text-muted-foreground uppercase tracking-widest font-bold">Or</span>
+            <span className="absolute bg-card px-3 text-[10px] text-muted-foreground uppercase tracking-widest font-bold">Or</span>
             <div className="w-full h-px bg-secondary"></div>
           </div>
 
           <Button 
             variant="outline" 
-            className="w-full h-11 border-2 rounded-xl font-bold flex gap-2 hover:bg-secondary/30 transition-colors"
+            className="w-full h-10 border-2 rounded-xl font-bold flex gap-2 hover:bg-secondary/30 transition-colors text-foreground"
             onClick={handleGoogleSignIn}
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24">
@@ -128,7 +128,7 @@ export default function LoginPage() {
             Google
           </Button>
         </CardContent>
-        <CardFooter className="justify-center pb-6 pt-0 bg-white">
+        <CardFooter className="justify-center pb-6 pt-0 bg-card">
           <p className="text-xs text-muted-foreground">
             {isRegistering ? "Already have an account?" : "New to SmartExpense?"}{" "}
             <button 

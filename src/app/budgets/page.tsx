@@ -52,7 +52,7 @@ export default function BudgetsPage() {
         <div className="max-w-4xl mx-auto p-4 md:p-10 space-y-8 md:space-y-10">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <h1 className="text-3xl md:text-4xl font-black tracking-tight text-foreground ml-14 md:ml-0">Budget Planner</h1>
-            <div className="bg-primary/10 text-primary px-4 py-2 rounded-2xl text-xs md:text-sm font-black uppercase tracking-widest border border-primary/20 w-fit">
+            <div className="bg-primary/20 text-primary dark:text-white px-4 py-2 rounded-2xl text-xs md:text-sm font-black uppercase tracking-widest border border-primary/20 w-fit">
               {format(new Date(), 'MMMM yyyy')}
             </div>
           </div>
@@ -94,7 +94,7 @@ export default function BudgetsPage() {
                       <div className="space-y-1">
                         <h4 className="font-black text-foreground text-lg">{stat.category}</h4>
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-black text-primary">₹{stat.spent.toFixed(2)}</span>
+                          <span className="text-sm font-black text-foreground">₹{stat.spent.toFixed(2)}</span>
                           <span className="text-xs text-muted-foreground font-bold">/</span>
                           <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">
                             {stat.limit > 0 ? `₹${stat.limit.toFixed(2)}` : 'No Limit'}
