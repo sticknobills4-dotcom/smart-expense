@@ -15,7 +15,7 @@
     --secondary: 215 20% 94%;
     --secondary-foreground: 224 71% 4%;
     --muted: 215 20% 90%;
-    --muted-foreground: 215 16% 35%; /* Darkened for better light mode visibility */
+    --muted-foreground: 215 16% 35%; 
     --accent: 158 64% 40%; /* Darker Emerald for Light Mode contrast */
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;

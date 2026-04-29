@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react";
-import { financeChat, FinanceChatOutput } from "@/ai/flows/finance-chat";
+import { financeChat } from "@/ai/flows/finance-chat";
 import { useFinance } from "@/hooks/use-finance";
 import { CATEGORIES } from "@/types/finance";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,7 +21,7 @@ export function FinanceChat() {
   const { accounts, addTransaction } = useFinance();
   const { toast } = useToast();
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'bot', content: "Hi! I'm SmartBot. How can I help you with your finances today? You can ask me questions or just tell me about an expense you just made!" }
+    { role: 'bot', content: "Hi! I'm SmartBot. How can I help you with your finances today? Tell me about an expense (e.g., 'I spent 30 on food') and I'll record it!" }
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -60,7 +60,7 @@ export function FinanceChat() {
 
         setMessages(prev => [...prev, { 
           role: 'bot', 
-          content: `✅ I've automatically updated your ${response.extractedTransaction?.category} records with ₹${response.extractedTransaction?.amount}!`,
+          content: `✅ Recorded! I've added ₹${response.extractedTransaction?.amount} to ${response.extractedTransaction?.category}.`,
           isTransaction: true 
         }]);
 
@@ -78,7 +78,7 @@ export function FinanceChat() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-320px)] md:h-[600px] relative">
+    <div className="flex flex-col h-[calc(100vh-340px)] md:h-[600px] relative">
       <Card className="border-none shadow-xl rounded-[2rem] overflow-hidden mac-card flex flex-col h-full bg-background/50 dark:bg-card/40">
         <CardHeader className="p-4 md:p-6 bg-primary/5 border-b border-primary/10 shrink-0">
           <CardTitle className="flex items-center gap-3 text-lg">
@@ -86,13 +86,13 @@ export function FinanceChat() {
               <Bot className="w-5 h-5 md:w-6 md:h-6" />
             </div>
             <div>
-              <p className="font-black text-foreground text-sm md:text-base">Financial Assistant</p>
-              <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">SmartBot AI</p>
+              <p className="font-black text-foreground text-sm md:text-base">Finance Assistant</p>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">SmartBot v2.0</p>
             </div>
           </CardTitle>
         </CardHeader>
 
-        <CardContent className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 pb-24 md:pb-6" ref={scrollRef}>
+        <CardContent className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 pb-20" ref={scrollRef}>
           {messages.map((msg, i) => (
             <div key={i} className={cn(
               "flex items-start gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300",
@@ -125,10 +125,11 @@ export function FinanceChat() {
         </CardContent>
       </Card>
 
-      <div className="fixed bottom-[74px] left-0 right-0 md:absolute md:bottom-0 p-3 md:p-4 border-t border-primary/10 bg-white/90 dark:bg-black/90 backdrop-blur-xl z-[45] md:rounded-b-[2rem] w-full max-w-5xl mx-auto">
+      {/* Fixed Chat Input Bar */}
+      <div className="fixed bottom-16 left-0 right-0 md:absolute md:bottom-0 p-3 md:p-4 border-t border-primary/10 bg-white/95 dark:bg-black/95 backdrop-blur-xl z-[45] md:rounded-b-[2rem] w-full max-w-5xl mx-auto">
         <div className="flex gap-2 relative">
           <Input 
-            placeholder="Tell me about an expense..." 
+            placeholder="Tell me about a transaction..." 
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}

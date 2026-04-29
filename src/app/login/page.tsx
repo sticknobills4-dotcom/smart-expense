@@ -72,7 +72,7 @@ export default function LoginPage() {
         <span className="text-xl font-black text-primary tracking-tighter">SmartExpense</span>
       </div>
 
-      <Card className="w-full max-w-[340px] border-none shadow-2xl overflow-hidden rounded-[2.5rem] bg-white dark:bg-card/80 backdrop-blur-md">
+      <Card className="w-full max-w-[320px] border-none shadow-2xl overflow-hidden rounded-[2.5rem] bg-white dark:bg-card/80 backdrop-blur-md">
         <CardHeader className="text-center pt-8 pb-4">
           <CardTitle className="text-xl font-black tracking-tight text-foreground">
             {isRegistering ? "Join Us" : "Welcome Back"}
@@ -82,7 +82,7 @@ export default function LoginPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4 px-6 pb-6">
-          <form onSubmit={handleSubmit} className="space-y-3">
+          <form onSubmit={handleSubmit} className="space-y-2.5">
             {isRegistering && (
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
