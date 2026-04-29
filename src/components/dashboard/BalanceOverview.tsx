@@ -1,7 +1,7 @@
 "use client"
 
 import { Card, CardContent } from "@/components/ui/card";
-import { TrendingUp, TrendingDown, DollarSign } from "lucide-react";
+import { TrendingUp, TrendingDown, DollarSign, Wallet } from "lucide-react";
 import { Account, Transaction } from "@/types/finance";
 import { cn } from "@/lib/utils";
 
@@ -14,7 +14,6 @@ export function BalanceOverview({
 }) {
   const totalBalance = accounts.reduce((sum, acc) => sum + acc.balance, 0);
   
-  // Calculate this month's income and expenses
   const now = new Date();
   const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   
@@ -30,39 +29,42 @@ export function BalanceOverview({
 
   const stats = [
     {
-      label: "Total Balance",
+      label: "Net Worth",
       value: totalBalance,
-      icon: DollarSign,
-      color: "text-primary",
-      bg: "bg-primary/10"
+      icon: Wallet,
+      color: "text-indigo-600",
+      bg: "bg-indigo-50",
+      border: "border-indigo-100/50"
     },
     {
-      label: "Monthly Income",
+      label: "This Month Income",
       value: monthlyIncome,
       icon: TrendingUp,
-      color: "text-accent",
-      bg: "bg-accent/10"
+      color: "text-emerald-600",
+      bg: "bg-emerald-50",
+      border: "border-emerald-100/50"
     },
     {
-      label: "Monthly Expenses",
+      label: "Monthly Outflow",
       value: monthlyExpense,
       icon: TrendingDown,
-      color: "text-destructive",
-      bg: "bg-destructive/10"
+      color: "text-red-600",
+      bg: "bg-red-50",
+      border: "border-red-100/50"
     }
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {stats.map((stat) => (
-        <Card key={stat.label} className="border-none shadow-sm overflow-hidden group hover:shadow-md transition-shadow">
-          <CardContent className="p-6 flex items-center gap-4">
-            <div className={cn("p-3 rounded-2xl transition-transform group-hover:scale-110", stat.bg)}>
-              <stat.icon className={cn("w-6 h-6", stat.color)} />
+        <Card key={stat.label} className={cn("border-none shadow-[0_8px_30px_rgb(0,0,0,0.02)] rounded-[2rem] group hover:shadow-xl transition-all duration-500", stat.bg)}>
+          <CardContent className="p-8 flex items-center gap-6">
+            <div className={cn("p-4 rounded-[1.25rem] transition-all duration-500 group-hover:scale-110 shadow-sm bg-white", stat.color)}>
+              <stat.icon className="w-8 h-8" />
             </div>
-            <div>
-              <p className="text-sm text-muted-foreground font-medium">{stat.label}</p>
-              <h3 className="text-2xl font-bold tracking-tight">
+            <div className="space-y-1">
+              <p className="text-xs text-slate-500 font-bold uppercase tracking-[0.15em]">{stat.label}</p>
+              <h3 className="text-3xl font-black tracking-tight text-slate-900">
                 ${stat.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </h3>
             </div>

@@ -4,48 +4,48 @@
 
 @layer base {
   :root {
-    --background: 210 20% 98%; /* Light grey/blue macOS background */
-    --foreground: 220 15% 15%;
+    --background: 210 20% 98%; /* Soft Slate Off-White */
+    --foreground: 224 71% 4%;
     --card: 0 0% 100%;
-    --card-foreground: 220 15% 15%;
+    --card-foreground: 224 71% 4%;
     --popover: 0 0% 100%;
-    --popover-foreground: 220 15% 15%;
-    --primary: 212 100% 48%; /* macOS blue */
+    --popover-foreground: 224 71% 4%;
+    --primary: 226 70% 55%; /* Indigo */
     --primary-foreground: 0 0% 100%;
-    --secondary: 210 20% 95%;
-    --secondary-foreground: 220 15% 15%;
-    --muted: 210 10% 90%;
-    --muted-foreground: 220 10% 45%;
-    --accent: 158 100% 40%; /* Minty aqua */
+    --secondary: 215 20% 94%;
+    --secondary-foreground: 224 71% 4%;
+    --muted: 215 20% 90%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 158 64% 52%; /* Emerald */
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 210 15% 90%;
-    --input: 210 15% 90%;
-    --ring: 212 100% 48%;
-    --radius: 0.75rem;
+    --border: 215 20% 92%;
+    --input: 215 20% 92%;
+    --ring: 226 70% 55%;
+    --radius: 1rem;
   }
 
   .dark {
-    --background: 220 20% 5%;
+    --background: 224 71% 4%;
     --foreground: 210 20% 98%;
-    --card: 220 20% 8%;
+    --card: 224 71% 4%;
     --card-foreground: 210 20% 98%;
-    --popover: 220 20% 8%;
+    --popover: 224 71% 4%;
     --popover-foreground: 210 20% 98%;
-    --primary: 212 100% 55%;
-    --primary-foreground: 220 20% 5%;
-    --secondary: 220 20% 15%;
+    --primary: 226 70% 65%;
+    --primary-foreground: 224 71% 4%;
+    --secondary: 215 28% 17%;
     --secondary-foreground: 210 20% 98%;
-    --muted: 220 20% 15%;
-    --muted-foreground: 210 10% 65%;
-    --accent: 158 100% 40%;
+    --muted: 215 28% 17%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 158 64% 52%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 62% 30%;
     --destructive-foreground: 210 20% 98%;
-    --border: 220 20% 15%;
-    --input: 220 20% 15%;
-    --ring: 212 100% 55%;
+    --border: 215 28% 17%;
+    --input: 215 28% 17%;
+    --ring: 226 70% 65%;
   }
 }
 
@@ -55,19 +55,23 @@
   }
   body {
     @apply bg-background text-foreground font-body antialiased;
-    background-image: radial-gradient(at 0% 0%, hsla(212, 100%, 48%, 0.05) 0, transparent 50%),
-                      radial-gradient(at 100% 0%, hsla(158, 100%, 40%, 0.05) 0, transparent 50%);
+    background-image: radial-gradient(at 0% 0%, hsla(226, 70%, 55%, 0.03) 0, transparent 50%),
+                      radial-gradient(at 100% 100%, hsla(158, 64%, 52%, 0.03) 0, transparent 50%);
   }
 }
 
 .mac-glass {
-  @apply bg-white/70 backdrop-blur-xl border border-white/20 shadow-xl;
+  @apply bg-white/70 backdrop-blur-2xl border border-white/40 shadow-xl;
 }
 
 .mac-card {
-  @apply bg-card/80 backdrop-blur-md border border-white/40 shadow-sm transition-all duration-300 hover:shadow-md;
+  @apply bg-card/80 backdrop-blur-md border border-white/50 shadow-sm transition-all duration-300 hover:shadow-lg hover:shadow-primary/5;
 }
 
 .mac-sidebar {
-  @apply bg-secondary/50 backdrop-blur-2xl border-r border-border/50;
+  @apply bg-slate-100/40 backdrop-blur-3xl border-r border-slate-200/50;
+}
+
+.glass-nav {
+  @apply bg-white/80 backdrop-blur-xl border-b border-slate-200/50;
 }
