@@ -7,104 +7,115 @@ import { CATEGORIES } from "@/types/finance";
 import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { format } from "date-fns";
 import { PieChart, TrendingUp } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function BudgetsPage() {
   const { user, budgets, transactions, loading, updateBudget } = useFinance();
   const [editingCategory, setEditingCategory] = useState<string | null>(null);
   const [tempAmount, setTempAmount] = useState<string>("");
+  const [currentMonth, setCurrentMonth] = useState<string>("");
 
-  const currentMonth = format(new Date(), 'yyyy-MM');
+  useEffect(() => {
+    // Avoid hydration mismatch by setting date on client mount
+    setCurrentMonth(format(new Date(), 'yyyy-MM'));
+  }, []);
 
-  if (loading || !user) return <div className="p-10">Loading budgets...</div>;
-
-  const getSpent = (cat: string) => {
-    return transactions
-      .filter(t => t.category === cat && t.type === 'expense' && t.date.startsWith(currentMonth))
-      .reduce((sum, t) => sum + t.amount, 0);
-  };
-
-  const budgetStats = CATEGORIES.expense.map(cat => {
-    const budget = budgets.find(b => b.category === cat && b.month === currentMonth);
-    const spent = getSpent(cat);
-    const limit = budget?.amount || 0;
-    const percent = limit > 0 ? Math.min((spent / limit) * 100, 100) : 0;
+  const budgetStats = useMemo(() => {
+    if (!currentMonth) return [];
     
-    return { category: cat, spent, limit, percent };
-  });
+    return CATEGORIES.expense.map(cat => {
+      const budget = budgets.find(b => b.category === cat && b.month === currentMonth);
+      const spent = transactions
+        .filter(t => t.category === cat && t.type === 'expense' && t.date.startsWith(currentMonth))
+        .reduce((sum, t) => sum + t.amount, 0);
+      
+      const limit = budget?.amount || 0;
+      const percent = limit > 0 ? Math.min((spent / limit) * 100, 100) : 0;
+      
+      return { category: cat, spent, limit, percent };
+    });
+  }, [budgets, transactions, currentMonth]);
 
   const totalBudget = budgetStats.reduce((sum, s) => sum + s.limit, 0);
   const totalSpent = budgetStats.reduce((sum, s) => sum + s.spent, 0);
+
+  if (loading || !user || !currentMonth) return <div className="p-10 text-center animate-pulse text-muted-foreground font-medium">Initializing Budget...</div>;
 
   return (
     <div className="flex min-h-screen bg-background">
       <Navbar user={user} />
       
       <main className="flex-1 md:ml-64 pb-20 md:pb-8">
-        <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-8">
+        <div className="max-w-4xl mx-auto p-4 md:p-10 space-y-10">
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold tracking-tight">Budget Planner</h1>
-            <div className="bg-secondary/50 px-4 py-2 rounded-full text-sm font-semibold">
+            <h1 className="text-4xl font-black tracking-tight text-slate-900">Budget Planner</h1>
+            <div className="bg-primary/10 text-primary px-6 py-2 rounded-2xl text-sm font-black uppercase tracking-widest border border-primary/20">
               {format(new Date(), 'MMMM yyyy')}
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Card className="bg-primary text-primary-foreground border-none">
-              <CardContent className="p-6 flex items-center gap-6">
-                <div className="p-4 bg-white/10 rounded-2xl">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card className="bg-primary text-primary-foreground border-none shadow-xl shadow-primary/20 rounded-[2.5rem]">
+              <CardContent className="p-8 flex items-center gap-6">
+                <div className="p-4 bg-white/20 rounded-2xl backdrop-blur-md">
                   <PieChart className="w-8 h-8" />
                 </div>
                 <div>
-                  <p className="text-sm opacity-70">Total Monthly Budget</p>
-                  <h3 className="text-3xl font-bold">${totalBudget.toLocaleString()}</h3>
+                  <p className="text-xs font-bold uppercase tracking-widest opacity-80">Total Budget</p>
+                  <h3 className="text-4xl font-black">${totalBudget.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
                 </div>
               </CardContent>
             </Card>
-            <Card className="bg-accent text-accent-foreground border-none">
-              <CardContent className="p-6 flex items-center gap-6">
-                <div className="p-4 bg-black/10 rounded-2xl">
+            <Card className="bg-accent text-accent-foreground border-none shadow-xl shadow-accent/20 rounded-[2.5rem]">
+              <CardContent className="p-8 flex items-center gap-6">
+                <div className="p-4 bg-black/10 rounded-2xl backdrop-blur-md">
                   <TrendingUp className="w-8 h-8" />
                 </div>
                 <div>
-                  <p className="text-sm opacity-70">Remaining Balance</p>
-                  <h3 className="text-3xl font-bold">${Math.max(0, totalBudget - totalSpent).toLocaleString()}</h3>
+                  <p className="text-xs font-bold uppercase tracking-widest opacity-80">Available</p>
+                  <h3 className="text-4xl font-black">${Math.max(0, totalBudget - totalSpent).toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
                 </div>
               </CardContent>
             </Card>
           </div>
 
-          <div className="grid grid-cols-1 gap-6">
-            <Card className="border-none shadow-sm">
-              <CardHeader>
-                <CardTitle>Spending by Category</CardTitle>
+          <div className="grid grid-cols-1 gap-8">
+            <Card className="border-none shadow-[0_20px_50px_rgba(0,0,0,0.03)] rounded-[3rem] overflow-hidden mac-card">
+              <CardHeader className="p-8 pb-0">
+                <CardTitle className="text-2xl font-black">Monthly Targets</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-8">
+              <CardContent className="p-8 space-y-10">
                 {budgetStats.map((stat) => (
-                  <div key={stat.category} className="space-y-3">
+                  <div key={stat.category} className="space-y-4">
                     <div className="flex justify-between items-end">
-                      <div>
-                        <h4 className="font-bold">{stat.category}</h4>
-                        <p className="text-xs text-muted-foreground">
-                          ${stat.spent.toFixed(2)} of {stat.limit > 0 ? `$${stat.limit.toFixed(2)}` : 'No limit set'}
-                        </p>
+                      <div className="space-y-1">
+                        <h4 className="font-black text-slate-800 text-lg">{stat.category}</h4>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-black text-primary">${stat.spent.toFixed(2)}</span>
+                          <span className="text-xs text-slate-400 font-bold">/</span>
+                          <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">
+                            {stat.limit > 0 ? `$${stat.limit.toFixed(2)}` : 'No Limit'}
+                          </span>
+                        </div>
                       </div>
+                      
                       {editingCategory === stat.category ? (
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 animate-in fade-in slide-in-from-right-2 duration-300">
                           <Input 
                             type="number" 
-                            className="w-24 h-8" 
+                            className="w-28 h-10 rounded-xl bg-slate-100 border-none font-bold" 
                             value={tempAmount} 
                             onChange={(e) => setTempAmount(e.target.value)}
                             autoFocus
                           />
-                          <Button size="sm" variant="default" className="h-8" onClick={async () => {
+                          <Button size="sm" className="h-10 rounded-xl px-4" onClick={async () => {
                             await updateBudget(stat.category, Number(tempAmount), currentMonth);
                             setEditingCategory(null);
-                          }}>Set</Button>
-                          <Button size="sm" variant="ghost" className="h-8" onClick={() => setEditingCategory(null)}>Cancel</Button>
+                          }}>Save</Button>
+                          <Button size="sm" variant="ghost" className="h-10 rounded-xl" onClick={() => setEditingCategory(null)}>Cancel</Button>
                         </div>
                       ) : (
                         <button 
@@ -112,13 +123,21 @@ export default function BudgetsPage() {
                             setEditingCategory(stat.category);
                             setTempAmount(stat.limit.toString());
                           }}
-                          className="text-xs text-primary font-bold hover:underline"
+                          className="text-xs font-black uppercase tracking-widest text-primary hover:bg-primary/5 px-4 py-2 rounded-xl transition-all border border-primary/20"
                         >
-                          {stat.limit > 0 ? 'Adjust' : 'Set Limit'}
+                          {stat.limit > 0 ? 'Adjust' : 'Set Budget'}
                         </button>
                       )}
                     </div>
-                    <Progress value={stat.percent} className={cn("h-2", stat.percent > 90 ? "bg-destructive/20" : "")} />
+                    <div className="relative h-3 w-full bg-slate-100 rounded-full overflow-hidden">
+                      <div 
+                        className={cn(
+                          "h-full transition-all duration-1000 ease-out rounded-full",
+                          stat.percent > 90 ? "bg-destructive shadow-[0_0_15px_rgba(239,68,68,0.4)]" : "bg-primary shadow-[0_0_15px_rgba(99,102,241,0.2)]"
+                        )}
+                        style={{ width: `${stat.percent}%` }}
+                      />
+                    </div>
                   </div>
                 ))}
               </CardContent>
@@ -129,5 +148,3 @@ export default function BudgetsPage() {
     </div>
   );
 }
-
-import { cn } from "@/lib/utils";

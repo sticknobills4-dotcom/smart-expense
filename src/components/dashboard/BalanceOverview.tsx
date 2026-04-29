@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { TrendingUp, TrendingDown, DollarSign, Wallet } from "lucide-react";
 import { Account, Transaction } from "@/types/finance";
 import { cn } from "@/lib/utils";
+import { useState, useEffect, useMemo } from "react";
 
 export function BalanceOverview({ 
   accounts, 
@@ -12,20 +13,27 @@ export function BalanceOverview({
   accounts: Account[], 
   transactions: Transaction[] 
 }) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const totalBalance = accounts.reduce((sum, acc) => sum + acc.balance, 0);
   
-  const now = new Date();
-  const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-  
-  const monthlyTransactions = transactions.filter(t => new Date(t.date) >= firstDayOfMonth);
-  
-  const monthlyIncome = monthlyTransactions
-    .filter(t => t.type === 'income')
-    .reduce((sum, t) => sum + t.amount, 0);
+  const monthlyStats = useMemo(() => {
+    if (!mounted) return { income: 0, expense: 0 };
     
-  const monthlyExpense = monthlyTransactions
-    .filter(t => t.type === 'expense')
-    .reduce((sum, t) => sum + t.amount, 0);
+    const now = new Date();
+    const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    
+    const filtered = transactions.filter(t => new Date(t.date) >= firstDayOfMonth);
+    
+    return {
+      income: filtered.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0),
+      expense: filtered.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0)
+    };
+  }, [transactions, mounted]);
 
   const stats = [
     {
@@ -37,8 +45,8 @@ export function BalanceOverview({
       border: "border-indigo-100/50"
     },
     {
-      label: "This Month Income",
-      value: monthlyIncome,
+      label: "Monthly Income",
+      value: monthlyStats.income,
       icon: TrendingUp,
       color: "text-emerald-600",
       bg: "bg-emerald-50",
@@ -46,7 +54,7 @@ export function BalanceOverview({
     },
     {
       label: "Monthly Outflow",
-      value: monthlyExpense,
+      value: monthlyStats.expense,
       icon: TrendingDown,
       color: "text-red-600",
       bg: "bg-red-50",
@@ -54,19 +62,32 @@ export function BalanceOverview({
     }
   ];
 
+  if (!mounted) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="h-32 bg-slate-100 animate-pulse rounded-[2rem]" />
+        ))}
+      </div>
+    );
+  }
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {stats.map((stat) => (
-        <Card key={stat.label} className={cn("border-none shadow-[0_8px_30px_rgb(0,0,0,0.02)] rounded-[2rem] group hover:shadow-xl transition-all duration-500", stat.bg)}>
-          <CardContent className="p-8 flex items-center gap-6">
-            <div className={cn("p-4 rounded-[1.25rem] transition-all duration-500 group-hover:scale-110 shadow-sm bg-white", stat.color)}>
+        <Card key={stat.label} className={cn("border-none shadow-[0_15px_40px_rgba(0,0,0,0.03)] rounded-[2.5rem] group hover:shadow-2xl transition-all duration-500 overflow-hidden", stat.bg)}>
+          <CardContent className="p-8 flex items-center gap-6 relative">
+            <div className={cn("p-4 rounded-2xl transition-all duration-500 group-hover:scale-110 shadow-sm bg-white", stat.color)}>
               <stat.icon className="w-8 h-8" />
             </div>
-            <div className="space-y-1">
-              <p className="text-xs text-slate-500 font-bold uppercase tracking-[0.15em]">{stat.label}</p>
-              <h3 className="text-3xl font-black tracking-tight text-slate-900">
+            <div className="space-y-1 relative z-10">
+              <p className="text-[10px] text-slate-500 font-black uppercase tracking-[0.2em]">{stat.label}</p>
+              <h3 className="text-3xl font-black tracking-tighter text-slate-900">
                 ${stat.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </h3>
+            </div>
+            <div className="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
+              <stat.icon className="w-24 h-24" />
             </div>
           </CardContent>
         </Card>
