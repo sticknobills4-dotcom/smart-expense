@@ -72,7 +72,7 @@ Budget Categories:
 
 Here is the user's spending history:
 {{#each spendingHistory}}
-- Date: {{date}}, Category: {{category}}, Type: {{type}}, Amount: {{{amount}}}{{#if description}}, Description: {{description}}{{/if}}
+- Date: {{date}}, Category: {{category}}, Type: {{type}}, Amount: {{{amount}}}{{#if description}}, Description: {{description}}{{id}}{{/if}}
 {{/each}}
 
 Based on the provided current budget and spending history, perform the following tasks:
@@ -83,7 +83,7 @@ Based on the provided current budget and spending history, perform the following
 4.  **Recommend New Categories**: Propose any new budget categories that might be useful based on unbudgeted or significant spending patterns.
 5.  **Offer Optimization Tips**: Provide general advice on how to improve financial health and avoid overspending.
 
-Structure your response as a JSON object matching the output schema. Ensure all fields (`budgetAdjustments`, `newCategorySuggestions`, `overspendingAlerts`, `optimizationTips`) are present, even if empty arrays.
+Structure your response as a JSON object matching the output schema. Ensure all fields ('budgetAdjustments', 'newCategorySuggestions', 'overspendingAlerts', 'optimizationTips') are present, even if empty arrays.
 
 `,
 });
