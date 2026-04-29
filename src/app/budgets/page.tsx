@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useFinance } from "@/hooks/use-finance";
@@ -57,25 +58,25 @@ export default function BudgetsPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <Card className="bg-primary text-primary-foreground border-none shadow-xl shadow-primary/20 rounded-[2rem] md:rounded-[2.5rem]">
+            <Card className="bg-primary text-white border-none shadow-xl shadow-primary/20 rounded-[2rem] md:rounded-[2.5rem]">
               <CardContent className="p-6 md:p-8 flex items-center gap-4 md:gap-6">
                 <div className="p-3 md:p-4 bg-white/20 rounded-2xl backdrop-blur-md shrink-0">
-                  <PieChart className="w-6 h-6 md:w-8 md:h-8" />
+                  <PieChart className="w-6 h-6 md:w-8 md:h-8 text-white" />
                 </div>
                 <div>
-                  <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest opacity-80">Total Budget</p>
-                  <h3 className="text-2xl md:text-4xl font-black">₹{totalBudget.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
+                  <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-white/80">Total Budget</p>
+                  <h3 className="text-2xl md:text-4xl font-black text-white">₹{totalBudget.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
                 </div>
               </CardContent>
             </Card>
-            <Card className="bg-accent text-accent-foreground border-none shadow-xl shadow-accent/20 rounded-[2rem] md:rounded-[2.5rem]">
+            <Card className="bg-accent text-white border-none shadow-xl shadow-accent/20 rounded-[2rem] md:rounded-[2.5rem]">
               <CardContent className="p-6 md:p-8 flex items-center gap-4 md:gap-6">
                 <div className="p-3 md:p-4 bg-black/10 rounded-2xl backdrop-blur-md shrink-0">
-                  <TrendingUp className="w-6 h-6 md:w-8 md:h-8" />
+                  <TrendingUp className="w-6 h-6 md:w-8 md:h-8 text-white" />
                 </div>
                 <div>
-                  <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest opacity-80">Available</p>
-                  <h3 className="text-2xl md:text-4xl font-black">₹{Math.max(0, totalBudget - totalSpent).toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
+                  <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-white/80">Available</p>
+                  <h3 className="text-2xl md:text-4xl font-black text-white">₹{Math.max(0, totalBudget - totalSpent).toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
                 </div>
               </CardContent>
             </Card>
@@ -84,7 +85,7 @@ export default function BudgetsPage() {
           <div className="grid grid-cols-1 gap-6">
             <Card className="border-none shadow-[0_20px_50px_rgba(0,0,0,0.03)] rounded-[2rem] md:rounded-[3rem] overflow-hidden mac-card">
               <CardHeader className="p-6 md:p-8 pb-0">
-                <CardTitle className="text-xl md:text-2xl font-black">Monthly Targets</CardTitle>
+                <CardTitle className="text-xl md:text-2xl font-black text-foreground">Monthly Targets</CardTitle>
               </CardHeader>
               <CardContent className="p-6 md:p-8 space-y-8 md:space-y-10">
                 {budgetStats.map((stat) => (
@@ -105,7 +106,7 @@ export default function BudgetsPage() {
                         <div className="flex gap-2 animate-in fade-in slide-in-from-right-2 duration-300 w-full sm:w-auto">
                           <Input 
                             type="number" 
-                            className="flex-1 sm:w-28 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 border-none font-bold" 
+                            className="flex-1 sm:w-28 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 border-none font-bold text-foreground" 
                             value={tempAmount} 
                             onChange={(e) => setTempAmount(e.target.value)}
                             autoFocus
