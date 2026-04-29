@@ -1,5 +1,7 @@
+
 "use client"
 
+import React, { useMemo } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
@@ -35,9 +37,54 @@ const navItems = [
   { label: 'Insights', icon: BrainCircuit, href: '/insights' },
 ];
 
+// Sub-component for nav items to optimize re-renders
+const NavItem = React.memo(({ item, isActive }: { item: typeof navItems[0], isActive: boolean }) => {
+  const Icon = item.icon;
+  return (
+    <Link
+      href={item.href}
+      className={cn(
+        "flex items-center justify-between px-4 py-3 rounded-2xl transition-all duration-200 group relative",
+        isActive 
+          ? "bg-primary text-white shadow-md shadow-primary/20" 
+          : "text-slate-500 hover:bg-slate-200/50 hover:text-slate-900"
+      )}
+    >
+      <div className="flex items-center gap-3">
+        <Icon className={cn("w-4.5 h-4.5 transition-transform duration-300", isActive ? "scale-110" : "group-hover:scale-110")} />
+        <span className="text-sm font-semibold">{item.label}</span>
+      </div>
+      {isActive && <ChevronRight className="w-3.5 h-3.5 opacity-70" />}
+    </Link>
+  );
+});
+NavItem.displayName = 'NavItem';
+
 export function Navbar({ user }: { user: any }) {
   const pathname = usePathname();
   const auth = useAuth();
+
+  const navigation = useMemo(() => navItems.map((item) => (
+    <NavItem key={item.href} item={item} isActive={pathname === item.href} />
+  )), [pathname]);
+
+  const mobileNavigation = useMemo(() => navItems.slice(0, 5).map((item) => {
+    const Icon = item.icon;
+    const isActive = pathname === item.href;
+    return (
+      <Link
+        key={item.href}
+        href={item.href}
+        className={cn(
+          "flex flex-col items-center gap-1.5 transition-all duration-300 px-2 py-1",
+          isActive ? "text-primary scale-110" : "text-slate-400"
+        )}
+      >
+        <Icon className={cn("w-6 h-6", isActive && "stroke-[2.5px]")} />
+        <span className="text-[10px] font-bold tracking-tight">{item.label}</span>
+      </Link>
+    );
+  }), [pathname]);
 
   return (
     <>
@@ -56,28 +103,7 @@ export function Navbar({ user }: { user: any }) {
           <div className="px-4 mb-4">
             <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400">Main Menu</span>
           </div>
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "flex items-center justify-between px-4 py-3 rounded-2xl transition-all duration-200 group relative",
-                  isActive 
-                    ? "bg-primary text-white shadow-md shadow-primary/20" 
-                    : "text-slate-500 hover:bg-slate-200/50 hover:text-slate-900"
-                )}
-              >
-                <div className="flex items-center gap-3">
-                  <Icon className={cn("w-4.5 h-4.5 transition-transform duration-300", isActive ? "scale-110" : "group-hover:scale-110")} />
-                  <span className="text-sm font-semibold">{item.label}</span>
-                </div>
-                {isActive && <ChevronRight className="w-3.5 h-3.5 opacity-70" />}
-              </Link>
-            );
-          })}
+          {navigation}
         </nav>
 
         <div className="p-6 border-t border-slate-200/50">
@@ -110,23 +136,7 @@ export function Navbar({ user }: { user: any }) {
 
       {/* Mobile Bottom Nav */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 glass-nav border-t flex justify-around items-center h-20 px-6 z-50 rounded-t-[2.5rem] shadow-[0_-8px_30px_rgb(0,0,0,0.04)]">
-        {navItems.slice(0, 5).map((item) => {
-          const Icon = item.icon;
-          const isActive = pathname === item.href;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "flex flex-col items-center gap-1.5 transition-all duration-300 px-2 py-1",
-                isActive ? "text-primary scale-110" : "text-slate-400"
-              )}
-            >
-              <Icon className={cn("w-6 h-6", isActive && "stroke-[2.5px]")} />
-              <span className="text-[10px] font-bold tracking-tight">{item.label}</span>
-            </Link>
-          );
-        })}
+        {mobileNavigation}
       </nav>
 
       {/* Header for mobile */}

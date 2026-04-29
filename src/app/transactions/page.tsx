@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useFinance } from "@/hooks/use-finance";
@@ -12,7 +13,7 @@ import {
   Edit2
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { TransactionDialog } from "@/components/transactions/TransactionDialog";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -24,12 +25,17 @@ export default function TransactionsPage() {
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | undefined>();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
-  if (loading || !user) return <div className="p-10 text-center text-muted-foreground animate-pulse font-medium italic">Loading your history...</div>;
+  // Memoize filtered results to keep filtering snappy
+  const filtered = useMemo(() => {
+    if (!search) return transactions;
+    const s = search.toLowerCase();
+    return transactions.filter(t => 
+      (t.category?.toLowerCase() || "").includes(s) || 
+      (t.description?.toLowerCase() || "").includes(s)
+    );
+  }, [transactions, search]);
 
-  const filtered = transactions.filter(t => 
-    (t.category?.toLowerCase() || "").includes(search.toLowerCase()) || 
-    (t.description?.toLowerCase() || "").includes(search.toLowerCase())
-  );
+  if (loading || !user) return <div className="p-10 text-center text-muted-foreground animate-pulse font-medium italic">Loading your history...</div>;
 
   const handleEditClick = (t: Transaction) => {
     setSelectedTransaction(t);

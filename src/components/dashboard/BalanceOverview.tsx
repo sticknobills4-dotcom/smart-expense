@@ -1,3 +1,4 @@
+
 "use client"
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -19,7 +20,7 @@ export function BalanceOverview({
     setMounted(true);
   }, []);
 
-  const totalBalance = accounts.reduce((sum, acc) => sum + acc.balance, 0);
+  const totalBalance = useMemo(() => accounts.reduce((sum, acc) => sum + acc.balance, 0), [accounts]);
   
   const monthlyStats = useMemo(() => {
     if (!mounted) return { income: 0, expense: 0 };
@@ -27,15 +28,17 @@ export function BalanceOverview({
     const now = new Date();
     const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     
-    const filtered = transactions.filter(t => new Date(t.date) >= firstDayOfMonth);
-    
-    return {
-      income: filtered.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0),
-      expense: filtered.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0)
-    };
+    // Efficient single-pass filter/reduce
+    return transactions.reduce((acc, t) => {
+      if (new Date(t.date) >= firstDayOfMonth) {
+        if (t.type === 'income') acc.income += t.amount;
+        if (t.type === 'expense') acc.expense += t.amount;
+      }
+      return acc;
+    }, { income: 0, expense: 0 });
   }, [transactions, mounted]);
 
-  const stats = [
+  const stats = useMemo(() => [
     {
       label: "Net Worth",
       value: totalBalance,
@@ -60,13 +63,13 @@ export function BalanceOverview({
       bg: "bg-red-50",
       border: "border-red-100/50"
     }
-  ];
+  ], [totalBalance, monthlyStats]);
 
   if (!mounted) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="h-32 bg-slate-100 animate-pulse rounded-[2rem]" />
+          <div key={i} className="h-32 bg-slate-100 animate-pulse rounded-[2.5rem]" />
         ))}
       </div>
     );
@@ -86,7 +89,7 @@ export function BalanceOverview({
                 ${stat.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </h3>
             </div>
-            <div className="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
+            <div className="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity pointer-events-none">
               <stat.icon className="w-24 h-24" />
             </div>
           </CardContent>
