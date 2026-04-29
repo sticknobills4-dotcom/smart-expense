@@ -36,7 +36,7 @@ export function TransactionDialog({
   open?: boolean,
   onOpenChange?: (open: boolean) => void,
   initialData?: Transaction,
-  trigger?: React.ReactNode
+  trigger?: React.ReactNode | null
 }) {
   const [internalOpen, setInternalOpen] = useState(false);
   const open = controlledOpen !== undefined ? controlledOpen : internalOpen;
@@ -84,14 +84,16 @@ export function TransactionDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {trigger || (
-          <Button className="gap-2 shadow-xl shadow-primary/20 rounded-xl px-6">
-            <PlusCircle className="w-4 h-4" />
-            <span className="font-bold">New Transaction</span>
-          </Button>
-        )}
-      </DialogTrigger>
+      {trigger !== null && (
+        <DialogTrigger asChild>
+          {trigger || (
+            <Button className="gap-2 shadow-xl shadow-primary/20 rounded-xl px-6">
+              <PlusCircle className="w-4 h-4" />
+              <span className="font-bold">New Transaction</span>
+            </Button>
+          )}
+        </DialogTrigger>
+      )}
       <DialogContent className="sm:max-w-[425px] mac-glass rounded-3xl p-8">
         <DialogHeader>
           <DialogTitle className="text-2xl font-black text-center mb-4">

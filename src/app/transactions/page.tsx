@@ -162,6 +162,7 @@ export default function TransactionsPage() {
         onOpenChange={setIsEditDialogOpen} 
         accounts={accounts} 
         initialData={selectedTransaction}
+        trigger={null}
         onSubmit={async (data) => {
           if (selectedTransaction) updateTransaction(selectedTransaction.id, data);
         }}
