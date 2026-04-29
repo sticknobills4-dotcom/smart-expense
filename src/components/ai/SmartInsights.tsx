@@ -26,7 +26,6 @@ export function SmartInsights({
   const handleAnalyze = async () => {
     setLoading(true);
     try {
-      // Map transactions to the format expected by the GenAI flow
       const mappedTransactions = transactions.map(t => ({
         id: t.id,
         date: t.date.split('T')[0],
@@ -61,15 +60,15 @@ export function SmartInsights({
     <div className="space-y-6">
       {!insights && (
         <Card className="bg-primary/5 border-dashed border-2 border-primary/20">
-          <CardContent className="flex flex-col items-center justify-center p-12 text-center">
-            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-6 shadow-xl shadow-primary/10">
-              <BrainCircuit className="w-8 h-8 text-primary animate-pulse" />
+          <CardContent className="flex flex-col items-center justify-center p-8 md:p-12 text-center">
+            <div className="w-12 h-12 md:w-16 md:h-16 bg-white rounded-full flex items-center justify-center mb-6 shadow-xl shadow-primary/10">
+              <BrainCircuit className="w-6 h-6 md:w-8 md:h-8 text-primary animate-pulse" />
             </div>
-            <h2 className="text-2xl font-bold mb-2">Unlock AI Spending Insights</h2>
-            <p className="text-muted-foreground max-w-md mb-8">
+            <h2 className="text-xl md:text-2xl font-bold mb-2">Unlock AI Spending Insights</h2>
+            <p className="text-xs md:text-sm text-muted-foreground max-w-md mb-8">
               Let our AI analyze your transactions to find trends, potential savings, and personalized budget adjustments.
             </p>
-            <Button size="lg" onClick={handleAnalyze} disabled={loading} className="gap-2">
+            <Button size="lg" onClick={handleAnalyze} disabled={loading} className="gap-2 w-full sm:w-auto">
               <Sparkles className="w-5 h-5" />
               {loading ? "Analyzing Financial Data..." : "Generate Insights"}
             </Button>
@@ -80,21 +79,21 @@ export function SmartInsights({
       {insights && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card className="border-none shadow-sm h-fit">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+            <CardHeader className="p-6 md:p-8">
+              <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
                 <Sparkles className="w-5 h-5 text-accent" />
                 Financial Summary
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <p className="text-lg leading-relaxed">{insights.summary}</p>
+            <CardContent className="px-6 md:px-8 pb-6 md:pb-8">
+              <p className="text-sm md:text-lg leading-relaxed">{insights.summary}</p>
               
               <div className="mt-8 space-y-4">
-                <h4 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">Spending Trends</h4>
+                <h4 className="font-semibold text-[10px] md:text-sm uppercase tracking-wider text-muted-foreground">Spending Trends</h4>
                 {insights.spendingTrends.map((trend, i) => (
                   <div key={i} className="flex gap-3 items-start bg-secondary/30 p-4 rounded-xl">
-                    <TrendingUp className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                    <p className="text-sm font-medium">{trend}</p>
+                    <TrendingUp className="w-4 h-4 md:w-5 md:h-5 text-primary shrink-0 mt-0.5" />
+                    <p className="text-xs md:text-sm font-medium">{trend}</p>
                   </div>
                 ))}
               </div>
@@ -102,41 +101,41 @@ export function SmartInsights({
           </Card>
 
           <Card className="border-none shadow-sm h-fit">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+            <CardHeader className="p-6 md:p-8">
+              <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
                 <AlertTriangle className="w-5 h-5 text-destructive" />
                 Optimization Alerts
               </CardTitle>
-              <CardDescription>Recommendations based on your patterns</CardDescription>
+              <CardDescription className="text-xs">Recommendations based on your patterns</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="px-6 md:px-8 pb-6 md:pb-8 space-y-6">
               {recommendations?.overspendingAlerts.length ? (
                 <div className="space-y-3">
                   {recommendations.overspendingAlerts.map((alert, i) => (
                     <div key={i} className="bg-destructive/5 border border-destructive/10 p-4 rounded-xl">
-                      <div className="flex justify-between items-start mb-2">
-                        <Badge variant="destructive">{alert.category}</Badge>
-                        <span className="text-sm font-bold text-destructive">
+                      <div className="flex flex-col sm:flex-row justify-between items-start gap-2 mb-2">
+                        <Badge variant="destructive" className="text-[10px]">{alert.category}</Badge>
+                        <span className="text-[10px] md:text-sm font-bold text-destructive">
                           Over by ${(alert.spentAmount - alert.allocatedAmount).toFixed(2)}
                         </span>
                       </div>
-                      <p className="text-sm text-destructive/80 leading-snug">{alert.message}</p>
+                      <p className="text-xs text-destructive/80 leading-snug">{alert.message}</p>
                     </div>
                   ))}
                 </div>
               ) : (
                 <div className="bg-accent/5 border border-accent/10 p-6 rounded-xl text-center">
-                  <p className="text-accent font-semibold">No significant overspending detected!</p>
-                  <p className="text-sm text-muted-foreground mt-1">Keep up the good work.</p>
+                  <p className="text-accent font-semibold text-sm">No significant overspending detected!</p>
+                  <p className="text-[10px] md:text-xs text-muted-foreground mt-1">Keep up the good work.</p>
                 </div>
               )}
 
               <div className="space-y-3">
-                <h4 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">Actionable Suggestions</h4>
+                <h4 className="font-semibold text-[10px] md:text-sm uppercase tracking-wider text-muted-foreground">Actionable Suggestions</h4>
                 {insights.suggestions.map((suggestion, i) => (
                   <div key={i} className="flex gap-3 items-center bg-primary/5 p-4 rounded-xl">
-                    <Info className="w-5 h-5 text-primary shrink-0" />
-                    <p className="text-sm font-medium">{suggestion}</p>
+                    <Info className="w-4 h-4 md:w-5 md:h-5 text-primary shrink-0" />
+                    <p className="text-xs md:text-sm font-medium">{suggestion}</p>
                   </div>
                 ))}
               </div>

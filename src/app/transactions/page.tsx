@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useFinance } from "@/hooks/use-finance";
@@ -71,8 +70,8 @@ export default function TransactionsPage() {
           </div>
 
           <div className="bg-white rounded-[2rem] md:rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.03)] border border-slate-100 overflow-hidden mac-card">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse min-w-[700px]">
+            <div className="overflow-x-auto scrollbar-hide">
+              <table className="w-full text-left border-collapse min-w-[700px] lg:min-w-full">
                 <thead>
                   <tr className="border-b bg-slate-50/50">
                     <th className="p-4 md:p-6 text-[9px] md:text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">Type</th>

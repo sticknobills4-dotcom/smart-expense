@@ -75,3 +75,12 @@
 .glass-nav {
   @apply bg-white/80 backdrop-blur-xl border-b border-slate-200/50;
 }
+
+/* Custom scrollbar for horizontal tables on mobile */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
