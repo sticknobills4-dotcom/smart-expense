@@ -1,6 +1,7 @@
+
 "use client"
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
   Dialog, 
   DialogContent, 
@@ -20,18 +21,36 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { PlusCircle } from "lucide-react";
-import { Account, CATEGORIES, TransactionType } from "@/types/finance";
+import { Account, CATEGORIES, TransactionType, Transaction } from "@/types/finance";
+import { cn } from "@/lib/utils";
 
 export function TransactionDialog({ 
   accounts, 
-  onSubmit 
+  onSubmit,
+  open: controlledOpen,
+  onOpenChange: setControlledOpen,
+  initialData,
+  trigger
 }: { 
   accounts: Account[], 
-  onSubmit: (data: any) => Promise<void> 
+  onSubmit: (data: any) => Promise<void>,
+  open?: boolean,
+  onOpenChange?: (open: boolean) => void,
+  initialData?: Transaction,
+  trigger?: React.ReactNode
 }) {
-  const [open, setOpen] = useState(false);
-  const [type, setType] = useState<TransactionType>('expense');
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = controlledOpen !== undefined ? controlledOpen : internalOpen;
+  const setOpen = setControlledOpen !== undefined ? setControlledOpen : setInternalOpen;
+
+  const [type, setType] = useState<TransactionType>(initialData?.type || 'expense');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (initialData) {
+      setType(initialData.type);
+    }
+  }, [initialData, open]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -43,7 +62,7 @@ export function TransactionDialog({
       accountId: formData.get('accountId') as string,
       category: formData.get('category') as string,
       description: formData.get('description') as string,
-      date: new Date().toISOString(),
+      date: initialData?.date || new Date().toISOString(),
       ...(type === 'transfer' && { toAccountId: formData.get('toAccountId') as string })
     };
 
@@ -60,14 +79,18 @@ export function TransactionDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="gap-2 shadow-lg shadow-primary/20">
-          <PlusCircle className="w-5 h-5" />
-          <span>New Transaction</span>
-        </Button>
+        {trigger || (
+          <Button className="gap-2 shadow-lg shadow-primary/20">
+            <PlusCircle className="w-5 h-5" />
+            <span>New Transaction</span>
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-center">Record Transaction</DialogTitle>
+          <DialogTitle className="text-2xl font-bold text-center">
+            {initialData ? 'Edit Transaction' : 'Record Transaction'}
+          </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 py-4">
           <div className="flex bg-secondary p-1 rounded-lg">
@@ -98,6 +121,7 @@ export function TransactionDialog({
                 required 
                 className="pl-8 text-xl font-bold" 
                 placeholder="0.00"
+                defaultValue={initialData?.amount}
               />
             </div>
           </div>
@@ -105,7 +129,7 @@ export function TransactionDialog({
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Account</Label>
-              <Select name="accountId" required>
+              <Select name="accountId" defaultValue={initialData?.accountId} required>
                 <SelectTrigger>
                   <SelectValue placeholder="Select Account" />
                 </SelectTrigger>
@@ -120,7 +144,7 @@ export function TransactionDialog({
             {type === 'transfer' ? (
               <div className="space-y-2">
                 <Label>To Account</Label>
-                <Select name="toAccountId" required>
+                <Select name="toAccountId" defaultValue={initialData?.toAccountId} required>
                   <SelectTrigger>
                     <SelectValue placeholder="Destination" />
                   </SelectTrigger>
@@ -134,7 +158,7 @@ export function TransactionDialog({
             ) : (
               <div className="space-y-2">
                 <Label>Category</Label>
-                <Select name="category" required>
+                <Select name="category" defaultValue={initialData?.category} required>
                   <SelectTrigger>
                     <SelectValue placeholder="Category" />
                   </SelectTrigger>
@@ -150,7 +174,7 @@ export function TransactionDialog({
 
           <div className="space-y-2">
             <Label htmlFor="description">Description</Label>
-            <Input id="description" name="description" placeholder="Optional notes..." />
+            <Input id="description" name="description" placeholder="Optional notes..." defaultValue={initialData?.description} />
           </div>
 
           <DialogFooter className="pt-4">
@@ -163,5 +187,3 @@ export function TransactionDialog({
     </Dialog>
   );
 }
-
-import { cn } from "@/lib/utils";

@@ -1,7 +1,8 @@
+
 "use client"
 
 import { useMemo } from 'react';
-import { collection, query, orderBy, doc } from 'firebase/firestore';
+import { collection, query, orderBy, doc, where } from 'firebase/firestore';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { 
   addDocumentNonBlocking, 
@@ -39,18 +40,35 @@ export function useFinance() {
     return collection(firestore, 'users', user.uid, 'savingsGoals');
   }, [firestore, user?.uid]);
 
-  const remindersQuery = useMemoFirebase(() => {
-    if (!firestore || !user) return null;
-    return collection(firestore, 'users', user.uid, 'reminders');
-  }, [firestore, user?.uid]);
-
   const { data: accounts = [], isLoading: accountsLoading } = useCollection<Account>(accountsQuery);
   const { data: transactions = [], isLoading: transactionsLoading } = useCollection<Transaction>(transactionsQuery);
   const { data: budgets = [], isLoading: budgetsLoading } = useCollection<Budget>(budgetsQuery);
   const { data: savingsGoals = [], isLoading: goalsLoading } = useCollection<SavingsGoal>(savingsGoalsQuery);
-  const { data: reminders = [], isLoading: remindersLoading } = useCollection<Reminder>(remindersQuery);
 
-  const loading = isUserLoading || accountsLoading || transactionsLoading || budgetsLoading || goalsLoading || remindersLoading;
+  const loading = isUserLoading || accountsLoading || transactionsLoading || budgetsLoading || goalsLoading;
+
+  // Helper to update account balances
+  const adjustBalance = (accountId: string, amount: number) => {
+    if (!user || !firestore) return;
+    const account = accounts.find(a => a.id === accountId);
+    if (account) {
+      const accountRef = doc(firestore, 'users', user.uid, 'accounts', accountId);
+      updateDocumentNonBlocking(accountRef, { balance: account.balance + amount });
+    }
+  };
+
+  const applyTransactionBalance = (t: Partial<Transaction>, multiply: number = 1) => {
+    if (t.type === 'expense') {
+      adjustBalance(t.accountId!, -t.amount! * multiply);
+    } else if (t.type === 'income') {
+      adjustBalance(t.accountId!, t.amount! * multiply);
+    } else if (t.type === 'transfer') {
+      adjustBalance(t.accountId!, -t.amount! * multiply);
+      if (t.toAccountId) {
+        adjustBalance(t.toAccountId, t.amount! * multiply);
+      }
+    }
+  };
 
   // Transaction Mutations
   const addTransaction = (data: Omit<Transaction, 'id' | 'userId' | 'createdAt'>) => {
@@ -61,52 +79,33 @@ export function useFinance() {
       userId: user.uid,
       createdAt: new Date().toISOString()
     });
+    applyTransactionBalance(data, 1);
+  };
 
-    // Update account balance
-    const account = accounts?.find(a => a.id === data.accountId);
-    if (account) {
-      const accountRef = doc(firestore, 'users', user.uid, 'accounts', data.accountId);
-      let newBalance = account.balance;
-      if (data.type === 'expense') newBalance -= data.amount;
-      if (data.type === 'income') newBalance += data.amount;
-      if (data.type === 'transfer') {
-        newBalance -= data.amount;
-        if (data.toAccountId) {
-          const toAcc = accounts?.find(a => a.id === data.toAccountId);
-          if (toAcc) {
-            const toRef = doc(firestore, 'users', user.uid, 'accounts', data.toAccountId);
-            updateDocumentNonBlocking(toRef, { balance: toAcc.balance + data.amount });
-          }
-        }
-      }
-      updateDocumentNonBlocking(accountRef, { balance: newBalance });
-    }
+  const updateTransaction = (id: string, data: Partial<Transaction>) => {
+    if (!user || !firestore) return;
+    const old = transactions.find(t => t.id === id);
+    if (!old) return;
+
+    // 1. Reverse old balance
+    applyTransactionBalance(old, -1);
+    
+    // 2. Update Doc
+    const docRef = doc(firestore, 'users', user.uid, 'transactions', id);
+    updateDocumentNonBlocking(docRef, { ...data, updatedAt: new Date().toISOString() });
+
+    // 3. Apply new balance
+    const merged = { ...old, ...data };
+    applyTransactionBalance(merged, 1);
   };
 
   const deleteTransaction = (id: string) => {
     if (!user || !firestore) return;
-    const t = transactions?.find(item => item.id === id);
+    const t = transactions.find(item => item.id === id);
     if (!t) return;
 
     // Reverse balance update
-    const account = accounts?.find(a => a.id === t.accountId);
-    if (account) {
-      const accountRef = doc(firestore, 'users', user.uid, 'accounts', t.accountId);
-      let newBalance = account.balance;
-      if (t.type === 'expense') newBalance += t.amount;
-      if (t.type === 'income') newBalance -= t.amount;
-      if (t.type === 'transfer') {
-        newBalance += t.amount;
-        if (t.toAccountId) {
-          const toAcc = accounts?.find(a => a.id === t.toAccountId);
-          if (toAcc) {
-            const toRef = doc(firestore, 'users', user.uid, 'accounts', t.toAccountId);
-            updateDocumentNonBlocking(toRef, { balance: toAcc.balance - t.amount });
-          }
-        }
-      }
-      updateDocumentNonBlocking(accountRef, { balance: newBalance });
-    }
+    applyTransactionBalance(t, -1);
 
     const docRef = doc(firestore, 'users', user.uid, 'transactions', id);
     deleteDocumentNonBlocking(docRef);
@@ -132,7 +131,7 @@ export function useFinance() {
   // Budget Mutations
   const updateBudget = (category: string, amount: number, month: string) => {
     if (!user || !firestore) return;
-    const existing = budgets?.find(b => b.category === category && b.month === month);
+    const existing = budgets.find(b => b.category === category && b.month === month);
     if (existing) {
       const docRef = doc(firestore, 'users', user.uid, 'budgets', existing.id);
       updateDocumentNonBlocking(docRef, { amount });
@@ -161,10 +160,16 @@ export function useFinance() {
     });
   };
 
-  const updateSavingsGoal = (id: string, currentAmount: number) => {
+  const updateSavingsGoal = (id: string, data: Partial<SavingsGoal>) => {
     if (!user || !firestore) return;
     const docRef = doc(firestore, 'users', user.uid, 'savingsGoals', id);
-    updateDocumentNonBlocking(docRef, { currentAmount });
+    updateDocumentNonBlocking(docRef, data);
+  };
+
+  const deleteSavingsGoal = (id: string) => {
+    if (!user || !firestore) return;
+    const docRef = doc(firestore, 'users', user.uid, 'savingsGoals', id);
+    deleteDocumentNonBlocking(docRef);
   };
 
   return {
@@ -173,14 +178,15 @@ export function useFinance() {
     transactions,
     budgets,
     savingsGoals,
-    reminders,
     loading,
     addTransaction,
+    updateTransaction,
     deleteTransaction,
     addAccount,
     deleteAccount,
     updateBudget,
     addSavingsGoal,
-    updateSavingsGoal
+    updateSavingsGoal,
+    deleteSavingsGoal
   };
 }

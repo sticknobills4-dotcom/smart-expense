@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useFinance } from "@/hooks/use-finance";
@@ -8,25 +9,33 @@ import {
   ArrowUpRight, 
   ArrowLeftRight,
   Search,
-  Filter,
-  Trash2
+  Trash2,
+  Edit2
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { TransactionDialog } from "@/components/transactions/TransactionDialog";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Transaction } from "@/types/finance";
 
 export default function TransactionsPage() {
-  const { user, transactions, accounts, loading, addTransaction, deleteTransaction } = useFinance();
+  const { user, transactions, accounts, loading, addTransaction, updateTransaction, deleteTransaction } = useFinance();
   const [search, setSearch] = useState("");
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | undefined>();
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
-  if (loading || !user) return <div className="p-10">Loading transactions...</div>;
+  if (loading || !user) return <div className="p-10 text-center">Loading transactions...</div>;
 
   const filtered = transactions.filter(t => 
     (t.category?.toLowerCase() || "").includes(search.toLowerCase()) || 
     (t.description?.toLowerCase() || "").includes(search.toLowerCase())
   );
+
+  const handleEditClick = (t: Transaction) => {
+    setSelectedTransaction(t);
+    setIsEditDialogOpen(true);
+  };
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -62,7 +71,7 @@ export default function TransactionsPage() {
                     <th className="p-5 text-xs font-bold uppercase tracking-wider text-muted-foreground">Account</th>
                     <th className="p-5 text-xs font-bold uppercase tracking-wider text-muted-foreground">Date</th>
                     <th className="p-5 text-xs font-bold uppercase tracking-wider text-muted-foreground text-right">Amount</th>
-                    <th className="p-5 text-xs font-bold uppercase tracking-wider text-muted-foreground">Actions</th>
+                    <th className="p-5 text-xs font-bold uppercase tracking-wider text-muted-foreground text-center">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y">
@@ -81,13 +90,20 @@ export default function TransactionsPage() {
                         </div>
                       </td>
                       <td className="p-5">
-                        <p className="font-bold leading-tight">{t.category || 'Uncategorized'}</p>
+                        <p className="font-bold leading-tight">{t.category || (t.type === 'transfer' ? 'Transfer' : 'Uncategorized')}</p>
                         <p className="text-xs text-muted-foreground">{t.description || 'No description'}</p>
                       </td>
                       <td className="p-5">
-                        <span className="text-xs font-bold px-3 py-1 bg-secondary rounded-full uppercase tracking-tighter">
-                          {accounts.find(a => a.id === t.accountId)?.name || 'Account'}
-                        </span>
+                        <div className="flex flex-col gap-1">
+                          <span className="text-xs font-bold px-3 py-1 bg-secondary rounded-full uppercase tracking-tighter w-fit">
+                            {accounts.find(a => a.id === t.accountId)?.name || 'Account'}
+                          </span>
+                          {t.type === 'transfer' && (
+                            <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                              to: {accounts.find(a => a.id === t.toAccountId)?.name || '...'}
+                            </span>
+                          )}
+                        </div>
                       </td>
                       <td className="p-5 text-sm font-medium text-muted-foreground">
                         {format(new Date(t.date), 'MMM dd, yyyy')}
@@ -99,18 +115,28 @@ export default function TransactionsPage() {
                         {t.type === 'expense' ? '-' : t.type === 'income' ? '+' : ''}${t.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                       </td>
                       <td className="p-5 text-center">
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="text-muted-foreground hover:text-destructive"
-                          onClick={() => {
-                            if (confirm("Delete this transaction? This will also revert the account balance.")) {
-                              deleteTransaction(t.id);
-                            }
-                          }}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+                        <div className="flex justify-center items-center gap-1">
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-8 w-8 text-muted-foreground hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => handleEditClick(t)}
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-8 w-8 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => {
+                              if (confirm("Delete this transaction? This will also revert the account balance.")) {
+                                deleteTransaction(t.id);
+                              }
+                            }}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -127,6 +153,16 @@ export default function TransactionsPage() {
           </div>
         </div>
       </main>
+
+      <TransactionDialog 
+        open={isEditDialogOpen} 
+        onOpenChange={setIsEditDialogOpen} 
+        accounts={accounts} 
+        initialData={selectedTransaction}
+        onSubmit={async (data) => {
+          if (selectedTransaction) updateTransaction(selectedTransaction.id, data);
+        }}
+      />
     </div>
   );
 }
