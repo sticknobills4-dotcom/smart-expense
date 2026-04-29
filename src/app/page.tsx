@@ -2,22 +2,21 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { useUser } from "@/firebase";
 
 export default function RootPage() {
+  const { user, isUserLoading } = useUser();
   const router = useRouter();
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user) => {
+    if (!isUserLoading) {
       if (user) {
         router.push('/dashboard');
       } else {
         router.push('/login');
       }
-    });
-    return unsub;
-  }, [router]);
+    }
+  }, [user, isUserLoading, router]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">

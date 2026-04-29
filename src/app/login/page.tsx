@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react";
-import { auth } from "@/lib/firebase";
+import { useAuth } from "@/firebase";
 import { 
   signInWithPopup, 
   GoogleAuthProvider, 
@@ -14,12 +14,14 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Wallet, Mail, Lock, User } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 export default function LoginPage() {
+  const auth = useAuth();
   const [isRegistering, setIsRegistering] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { toast } = useToast();
 
   const handleGoogleSignIn = async () => {
     try {

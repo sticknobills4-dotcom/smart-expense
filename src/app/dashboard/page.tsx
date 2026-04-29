@@ -18,19 +18,17 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { cn } from "@/lib/utils";
 
 export default function DashboardPage() {
-  const { user, accounts, transactions, loading, addTransaction, addAccount } = useFinance();
+  const { user, accounts, transactions, loading, addTransaction, addAccount, isUserLoading } = useFinance();
   const router = useRouter();
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (u) => {
-      if (!u) router.push('/login');
-    });
-    return unsub;
-  }, [router]);
+    if (!isUserLoading && !user) {
+      router.push('/login');
+    }
+  }, [user, isUserLoading, router]);
 
   if (loading || !user) {
     return (
@@ -123,7 +121,7 @@ export default function DashboardPage() {
                   <button onClick={() => {
                     const name = prompt("Account Name:");
                     const type = prompt("Type (Cash, Bank, Wallet, Savings):") as any;
-                    if (name && type) addAccount({ name, type, balance: 0 });
+                    if (name && type) addAccount({ name, type, balance: 0, currency: 'USD' });
                   }} className="p-1 hover:bg-secondary rounded-full transition-colors">
                     <Plus className="w-5 h-5 text-primary" />
                   </button>
@@ -170,5 +168,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-import { cn } from "@/lib/utils";
