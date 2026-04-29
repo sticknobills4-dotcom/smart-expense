@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useMemo } from 'react';
@@ -66,7 +67,7 @@ export function Navbar({ user }: { user: any }) {
     <NavItem key={item.href} item={item} isActive={pathname === item.href} />
   )), [pathname]);
 
-  const mobileNavigation = useMemo(() => navItems.slice(0, 5).map((item) => {
+  const mobileNavigation = useMemo(() => navItems.map((item) => {
     const Icon = item.icon;
     const isActive = pathname === item.href;
     return (
@@ -74,12 +75,12 @@ export function Navbar({ user }: { user: any }) {
         key={item.href}
         href={item.href}
         className={cn(
-          "flex flex-col items-center gap-1.5 transition-all duration-300 px-2 py-1 flex-1",
-          isActive ? "text-primary scale-110" : "text-slate-400"
+          "flex flex-col items-center gap-1.5 transition-all duration-300 px-1 py-1 flex-1",
+          isActive ? "text-primary scale-105" : "text-slate-400"
         )}
       >
-        <Icon className={cn("w-6 h-6", isActive && "stroke-[2.5px]")} />
-        <span className="text-[10px] font-bold tracking-tight">{item.label}</span>
+        <Icon className={cn("w-5 h-5", isActive && "stroke-[2.5px]")} />
+        <span className="text-[9px] font-bold tracking-tight text-center">{item.label}</span>
       </Link>
     );
   }), [pathname]);
@@ -136,20 +137,6 @@ export function Navbar({ user }: { user: any }) {
       <nav className="md:hidden fixed bottom-0 left-0 right-0 glass-nav border-t flex justify-around items-center h-20 px-2 z-50 rounded-t-[2.5rem] shadow-[0_-8px_30px_rgb(0,0,0,0.04)]">
         {mobileNavigation}
       </nav>
-
-      {/* Header for mobile */}
-      <header className="md:hidden sticky top-0 glass-nav h-16 flex items-center justify-between px-6 z-40">
-        <Link href="/dashboard" className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-primary rounded-xl flex items-center justify-center text-white shadow-md shadow-primary/20">
-            <Wallet className="w-4 h-4" />
-          </div>
-          <span className="font-black text-lg tracking-tighter text-slate-800">SmartExpense</span>
-        </Link>
-        <Avatar className="h-8 w-8 ring-2 ring-primary/10">
-          <AvatarImage src={user?.photoURL || ''} />
-          <AvatarFallback className="text-[10px] font-bold">{user?.email?.charAt(0)}</AvatarFallback>
-        </Avatar>
-      </header>
     </>
   );
 }
