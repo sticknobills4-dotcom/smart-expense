@@ -8,21 +8,24 @@ import {
   ArrowUpRight, 
   ArrowLeftRight,
   Search,
-  Filter
+  Filter,
+  Trash2
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { TransactionDialog } from "@/components/transactions/TransactionDialog";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export default function TransactionsPage() {
-  const { user, transactions, accounts, loading, addTransaction } = useFinance();
+  const { user, transactions, accounts, loading, addTransaction, deleteTransaction } = useFinance();
   const [search, setSearch] = useState("");
 
   if (loading || !user) return <div className="p-10">Loading transactions...</div>;
 
   const filtered = transactions.filter(t => 
-    t.category.toLowerCase().includes(search.toLowerCase()) || 
-    t.description.toLowerCase().includes(search.toLowerCase())
+    (t.category?.toLowerCase() || "").includes(search.toLowerCase()) || 
+    (t.description?.toLowerCase() || "").includes(search.toLowerCase())
   );
 
   return (
@@ -47,10 +50,6 @@ export default function TransactionsPage() {
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
-            <button className="h-11 px-6 bg-white border-none shadow-sm rounded-xl flex items-center gap-2 font-semibold text-sm hover:bg-secondary transition-colors">
-              <Filter className="w-4 h-4" />
-              Filters
-            </button>
           </div>
 
           <div className="bg-white rounded-3xl shadow-sm border-none overflow-hidden">
@@ -63,6 +62,7 @@ export default function TransactionsPage() {
                     <th className="p-5 text-xs font-bold uppercase tracking-wider text-muted-foreground">Account</th>
                     <th className="p-5 text-xs font-bold uppercase tracking-wider text-muted-foreground">Date</th>
                     <th className="p-5 text-xs font-bold uppercase tracking-wider text-muted-foreground text-right">Amount</th>
+                    <th className="p-5 text-xs font-bold uppercase tracking-wider text-muted-foreground">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y">
@@ -98,11 +98,25 @@ export default function TransactionsPage() {
                       )}>
                         {t.type === 'expense' ? '-' : t.type === 'income' ? '+' : ''}${t.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                       </td>
+                      <td className="p-5 text-center">
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="text-muted-foreground hover:text-destructive"
+                          onClick={() => {
+                            if (confirm("Delete this transaction? This will also revert the account balance.")) {
+                              deleteTransaction(t.id);
+                            }
+                          }}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </td>
                     </tr>
                   ))}
                   {filtered.length === 0 && (
                     <tr>
-                      <td colSpan={5} className="p-20 text-center text-muted-foreground font-medium italic">
+                      <td colSpan={6} className="p-20 text-center text-muted-foreground font-medium italic">
                         No transactions found matching your criteria.
                       </td>
                     </tr>
@@ -116,5 +130,3 @@ export default function TransactionsPage() {
     </div>
   );
 }
-
-import { cn } from "@/lib/utils";

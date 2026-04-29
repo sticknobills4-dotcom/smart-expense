@@ -1,4 +1,4 @@
-export type AccountType = 'Cash' | 'Bank' | 'Wallet' | 'Savings';
+export type AccountType = 'Cash' | 'Bank' | 'Wallet' | 'Savings' | 'Credit Card' | 'Investment';
 export type TransactionType = 'income' | 'expense' | 'transfer';
 
 export interface Account {
@@ -7,7 +7,9 @@ export interface Account {
   name: string;
   type: AccountType;
   balance: number;
-  createdAt: number;
+  currency: string;
+  createdAt: string;
+  updatedAt?: string;
 }
 
 export interface Transaction {
@@ -20,14 +22,42 @@ export interface Transaction {
   date: string; // ISO string
   description: string;
   toAccountId?: string; // For transfers
+  createdAt: string;
+  updatedAt?: string;
 }
 
 export interface Budget {
   id: string;
   userId: string;
+  categoryId: string;
   category: string;
   amount: number;
+  spentAmount: number;
   month: string; // YYYY-MM
+  createdAt: string;
+}
+
+export interface SavingsGoal {
+  id: string;
+  userId: string;
+  name: string;
+  targetAmount: number;
+  currentAmount: number;
+  targetDate: string;
+  startDate: string;
+  status: 'active' | 'achieved' | 'cancelled';
+  createdAt: string;
+}
+
+export interface Reminder {
+  id: string;
+  userId: string;
+  title: string;
+  description?: string;
+  dueDate: string;
+  isRecurring: boolean;
+  isCompleted: boolean;
+  createdAt: string;
 }
 
 export const CATEGORIES = {

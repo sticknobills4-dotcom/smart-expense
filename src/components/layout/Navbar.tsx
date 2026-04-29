@@ -10,7 +10,7 @@ import {
   PlusCircle, 
   BrainCircuit,
   LogOut,
-  User
+  Target
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { auth } from '@/lib/firebase';
@@ -24,13 +24,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/avatar";
 
 const navItems = [
   { label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard' },
   { label: 'Transactions', icon: ArrowUpRight, href: '/transactions' },
   { label: 'Accounts', icon: Wallet, href: '/accounts' },
   { label: 'Budgets', icon: PieChart, href: '/budgets' },
+  { label: 'Savings', icon: Target, href: '/savings' },
   { label: 'Insights', icon: BrainCircuit, href: '/insights' },
 ];
 
@@ -82,7 +83,7 @@ export function Navbar({ user }: { user: any }) {
                     {user?.displayName?.charAt(0) || user?.email?.charAt(0) || 'U'}
                   </AvatarFallback>
                 </Avatar>
-                <div className="flex flex-col items-start overflow-hidden">
+                <div className="flex flex-col items-start overflow-hidden text-left">
                   <span className="text-sm font-semibold truncate w-full">{user?.displayName || 'User'}</span>
                   <span className="text-xs text-muted-foreground truncate w-full">{user?.email}</span>
                 </div>
