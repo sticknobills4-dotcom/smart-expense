@@ -13,11 +13,10 @@ import {
   YAxis, 
   CartesianGrid, 
   Tooltip, 
-  Legend 
 } from "recharts"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Transaction, CATEGORIES } from "@/types/finance"
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
+import { Transaction } from "@/types/finance"
+import { cn } from "@/lib/utils"
 
 export function DashboardCharts({ transactions }: { transactions: Transaction[] }) {
   // 1. Process Data for Category Pie Chart (Expenses only)
@@ -92,16 +91,16 @@ export function DashboardCharts({ transactions }: { transactions: Transaction[] 
                   dataKey="value"
                 >
                   {categoryData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} stroke="none" />
                   ))}
                 </Pie>
                 <Tooltip 
                   content={({ active, payload }) => {
                     if (active && payload && payload.length) {
                       return (
-                        <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-3 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800">
-                          <p className="text-xs font-black uppercase text-slate-400 mb-1">{payload[0].name}</p>
-                          <p className="text-lg font-black text-primary">${Number(payload[0].value).toLocaleString()}</p>
+                        <div className="bg-white dark:bg-slate-950 p-4 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 ring-1 ring-black/5">
+                          <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest mb-1">{payload[0].name}</p>
+                          <p className="text-xl font-black text-foreground">${Number(payload[0].value).toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
                         </div>
                       )
                     }
@@ -114,8 +113,8 @@ export function DashboardCharts({ transactions }: { transactions: Transaction[] 
           <div className="grid grid-cols-2 gap-x-8 gap-y-2 mt-4 w-full px-4">
             {categoryData.map((entry, index) => (
               <div key={entry.name} className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[index % COLORS.length] }} />
-                <span className="text-[10px] font-bold text-muted-foreground uppercase truncate">{entry.name}</span>
+                <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: COLORS[index % COLORS.length] }} />
+                <span className="text-[10px] font-black text-muted-foreground uppercase truncate tracking-wider">{entry.name}</span>
               </div>
             ))}
           </div>
@@ -146,12 +145,16 @@ export function DashboardCharts({ transactions }: { transactions: Transaction[] 
                   content={({ active, payload }) => {
                     if (active && payload && payload.length) {
                       return (
-                        <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-4 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 space-y-2">
+                        <div className="bg-white dark:bg-slate-950 p-4 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 ring-1 ring-black/5 space-y-3">
+                          <p className="text-[11px] font-black text-foreground border-b dark:border-slate-800 pb-2 mb-2">{(payload[0]?.payload as any).month}</p>
                           {payload.map((p, i) => (
-                            <div key={i} className="flex flex-col">
-                              <span className="text-[9px] font-black uppercase text-slate-400">{p.name}</span>
-                              <span className={p.name === 'income' ? 'text-emerald-500 font-black' : 'text-primary font-black'}>
-                                ${Number(p.value).toLocaleString()}
+                            <div key={i} className="flex items-center justify-between gap-8">
+                              <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }} />
+                                <span className="text-[10px] font-black uppercase text-muted-foreground tracking-wider">{p.name}</span>
+                              </div>
+                              <span className={cn("text-sm font-black tracking-tight", p.name === 'income' ? 'text-emerald-500' : 'text-primary')}>
+                                ${Number(p.value).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                               </span>
                             </div>
                           ))}
@@ -161,8 +164,8 @@ export function DashboardCharts({ transactions }: { transactions: Transaction[] 
                     return null
                   }}
                 />
-                <Bar dataKey="income" fill="hsl(var(--accent))" radius={[4, 4, 0, 0]} barSize={20} />
-                <Bar dataKey="expense" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} barSize={20} />
+                <Bar dataKey="income" name="income" fill="hsl(var(--accent))" radius={[4, 4, 0, 0]} barSize={20} />
+                <Bar dataKey="expense" name="expense" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} barSize={20} />
               </BarChart>
             </ResponsiveContainer>
           </div>
