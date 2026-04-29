@@ -1,3 +1,16 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "hero-dashboard",
+      "description": "SmartExpense dashboard preview",
+      "imageUrl": "https://picsum.photos/seed/smart-dash/1200/800",
+      "imageHint": "finance dashboard"
+    },
+    {
+      "id": "user-avatar",
+      "description": "Default user avatar",
+      "imageUrl": "https://picsum.photos/seed/avatar/200/200",
+      "imageHint": "user profile"
+    }
+  ]
 }
